@@ -1,0 +1,10 @@
+v 4
+file . "ULA_tb.vhd" "6795f4a5de9e1836ece9f4e62ec5dee5c4f253e5" "20241031225936.270":
+  entity ula_tb at 1( 0) + 0 on 59;
+  architecture a_ula_tb of ula_tb at 8( 107) + 0 on 60;
+file . "Comparator.vhd" "90a18158703be770e860401814a87392735b93d0" "20241031225936.110":
+  entity comparator at 1( 0) + 0 on 55;
+  architecture a_comparator of comparator at 13( 240) + 0 on 56;
+file . "ULA.vhd" "e573472071cf3772de17b39ec6efcd302c55b084" "20241031225936.174":
+  entity ula at 1( 0) + 0 on 57;
+  architecture a_ula of ula at 18( 422) + 0 on 58;
