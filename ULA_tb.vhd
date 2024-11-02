@@ -49,32 +49,62 @@ begin
             -- to_unsigned(3, 16) converte 3 para o tipo unsigned com 16 bits
 
             -- Test case 1: A = 3, B = 2, Op = "00" (Addition)
-            A <= to_unsigned(3, 16);
-            B <= to_unsigned(2, 16);
-            Op <= "00";
-            wait for 10 ns;
+                A <= to_unsigned(3, 16);
+                B <= to_unsigned(2, 16);
+                Op <= "00";
+                wait for 10 ns;
+
+            -- Test case 2: A = 2^16 - 1, B = 1, Op = "00" (Addition) OVERFLOW DE POSITIVOS --------------------
+                A <= to_unsigned(2**16 - 1, 16);
+                B <= to_unsigned(1, 16);
+                Op <= "00";
+                wait for 10 ns;
+
+            -- Test case 3: A = -2^15, B = -1, Op = "00" (Addition) OVERFLOW DE NEGATIVOS ------------------
+                -- A <= to_signed(-2**15, 16);
+                -- B <= to_signed(-1, 16);
+                -- Op <= "00";
+                -- wait for 10 ns;
     
-            -- Test case 2: A = 5, B = 3, Op = "01" (Subtraction)
-            A <= to_unsigned(5, 16);
-            B <= to_unsigned(3, 16);
-            Op <= "01";
-            wait for 10 ns;
+            -- Test case 4: A = 5, B = 3, Op = "01" (Subtraction) RESULT POSITIVO
+                A <= to_unsigned(5, 16);
+                B <= to_unsigned(3, 16);
+                Op <= "01";
+                wait for 10 ns;
+
+            -- Test case 5: A = 8, B = 9, Op = "01" (subtraction) RESULT NEGATIVO
+                A <= to_unsigned(8, 16);
+                B <= to_unsigned(9, 16);
+                Op <= "01";
+                wait for 10 ns;
+
+            -- Test case 6: A = -2^15, B = 1, Op = "01" (subtraction) OVERFLOW DE NEGATIVOS NA SUBTRAÇÃO ------------------
+                -- A <= to_signed(-2**15, 16);
+                -- B <= to_signed(1, 16);
+                -- Op <= "01";
+                -- wait for 10 ns;
+
+            -- Test case 7: A = 2^15 - 1, B = -1, Op = "01" (subtraction) OVERFLOW DE NEGATIVOS NA SUBTRAÇÃO ------------------
+                -- A <= to_signed(2**15 - 1, 16);
+                -- B <= to_signed(-1, 16);
+                -- Op <= "01";
+                -- wait for 10 ns;
     
-            -- Test case 3: A = 6, B = 9, Op = "10" (AND)
+            -- Test case 8: A = 6, B = X, Op = "10" (NOT)
             A <= to_unsigned(6, 16);
-            B <= to_unsigned(9, 16);
+            B <= (others => '0');
             Op <= "10";
             wait for 10 ns;
     
-            -- Test case 4: A = 7, B = 8, Op = "11" (Equality)
+            -- Test case 9: A = 7, B = 8, Op = "11" (Equality)
             A <= to_unsigned(7, 16);
             B <= to_unsigned(8, 16);
             Op <= "11";
             wait for 10 ns;
     
-            -- Test case 5: A = 4, B = 4, Op = "11" (Equality)
-            A <= to_unsigned(4, 16);
-            B <= to_unsigned(4, 16);
+            -- Test case 10: A = 2^15, B = 2^15, Op = "11" (Equality)
+            A <= to_unsigned(2**15, 16);
+            B <= to_unsigned(2**15, 16);
             Op <= "11";
             wait for 10 ns;
     
