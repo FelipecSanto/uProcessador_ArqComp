@@ -39,7 +39,6 @@ run: $(TESTBENCH)
 
 # Regra para limpar os arquivos gerados
 clean:
-	if exist $(TESTBENCH) del $(TESTBENCH)
 	if exist work-obj08.cf del work-obj08.cf
 	if exist $(GHW_FILE) del $(GHW_FILE)
 
