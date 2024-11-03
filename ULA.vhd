@@ -4,10 +4,12 @@ use ieee.numeric_std.all;
 
 entity ULA is
     Port (
+        -- Entradas e saídas
         A : in unsigned(15 downto 0);
         B : in unsigned(15 downto 0);
         Op : in unsigned(1 downto 0);
         Result : out unsigned(15 downto 0);
+        -- Flags
         CarryOut : out STD_LOGIC;
         Equal : out STD_LOGIC;
         Negative : out STD_LOGIC;
@@ -16,70 +18,43 @@ entity ULA is
 end entity;
 
 architecture a_ULA of ULA is
-    signal soma : unsigned(15 downto 0);
-    signal subtracao : unsigned(15 downto 0);
-    signal carryOut_soma : STD_LOGIC;
-    signal eq : STD_LOGIC;
-
-    component Comparator
-        Port (
-            A : in unsigned(15 downto 0);
-            B : in unsigned(15 downto 0);
-            Equal : out STD_LOGIC
-        );
-    end component;
-
-    component Somador
-        Port (
-            A : in unsigned(15 downto 0);
-            B : in unsigned(15 downto 0);
-            Sum : out unsigned(15 downto 0);
-            Cout : out STD_LOGIC
-        );
-    end component;
+    -- Operações
+    signal soma : unsigned(16 downto 0);
+    signal subtracao : unsigned(16 downto 0);
+    signal notA : unsigned(15 downto 0);
+    signal igualdade : unsigned(15 downto 0);
+    -- Resultado
+    signal resultadoParcial : unsigned(16 downto 0);
 
 begin
 
-    -- OPERAÇOES
+    -- Operações
 
-        soma_inst: Somador
-            Port map (
-                A => A,
-                B => B,
-                Sum => soma,
-                Cout => carryOut_soma
-            );
+        soma <= ('0'&A) + ('0'&B);
+        subtracao <= ('0'&A) - ('0'&B);
+        notA <= not A;
+        igualdade <= A;
 
-        subtracao <= A - B;
+        resultadoParcial <= soma            when Op="00" else
+                            subtracao       when Op="01" else
+                            ('0'&notA)      when Op="10" else
+                            ('0'&igualdade) when Op="11" else
+                            "00000000000000000";
 
-    -- FLAGS
+    -- Flags
 
-        Overflow <= '1' when (Op = "00" and A(15) = B(15) and A(15) /= soma(15)) else
-                    '1' when (Op = "01" and A(15) /= B(15) and A(15) /= subtracao(15)) else
+        Overflow <= '1' when (Op = "00" and A(15) = '1' and B(15) = '1' and resultadoParcial(15) = '0') else
+                    '1' when (Op = "00" and A(15) = '0' and B(15) = '0' and resultadoParcial(15) = '1') else
                     '0';
                         
-        -- Será que considera quando dá overflow e fica negativo aqui?
-        -- Será que a gente considera negativo quando nega o A?
-        
-        Negative <= subtracao(15) when Op="01" else '0';
+        Negative <= resultadoParcial(15);
 
-        CarryOut <= carryOut_soma when Op="00" else '0';
+        CarryOut <= resultadoParcial(16) when Op = "00" else '0';
 
-        comp_inst: Comparator
-            Port map (
-                A => A,
-                B => B,
-                Equal => eq
-            );
+        Equal <= '1' when A = B else '0';
 
+    -- Resultado 
 
-    -- DEFINIÇÃO DE QUAL OPERAÇÃO É REALIZADA
+        Result <=  resultadoParcial (15 downto 0); 
 
-        Result <=   soma(15 downto 0)       when Op="00" else
-                    subtracao(15 downto 0)  when Op="01" else
-                    not A                   when Op="10" else
-                                            "0000000000000000";
-
-        Equal <= eq when Op = "11" else '0';
-    
 end architecture;

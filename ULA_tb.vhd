@@ -46,63 +46,49 @@ begin
         stim_proc: process
         begin
 
-            -- to_unsigned(3, 16) converte 3 para o tipo unsigned com 16 bits
-
-            -- Test case 1: A = 3, B = 2, Op = "00" (Addition)
+            -- Test case 1: A = 3, B = 2, Op = "00" (adição) - Resultado esperado: 5
                 A <= to_unsigned(3, 16);
                 B <= to_unsigned(2, 16);
                 Op <= "00";
                 wait for 10 ns;
 
-            -- Test case 2: A = 2^16 - 1, B = 1, Op = "00" (Addition) OVERFLOW DE POSITIVOS --------------------
-                A <= to_unsigned(2**16 - 1, 16);
+            -- Test case 2: A = 2^16 - 1, B = 1, Op = "00" (adição) - Resultado esperado: Overflow
+                A <= to_unsigned(2**15 - 1, 16);
                 B <= to_unsigned(1, 16);
                 Op <= "00";
                 wait for 10 ns;
 
-            -- Test case 3: A = -2^15, B = -1, Op = "00" (Addition) OVERFLOW DE NEGATIVOS ------------------
-                -- A <= to_signed(-2**15, 16);
-                -- B <= to_signed(-1, 16);
-                -- Op <= "00";
-                -- wait for 10 ns;
+            -- Test case 3: A = 2^16 - 1, B = 1, Op = "00" (adição) - Resultado esperado: carry
+                A <= to_unsigned(2**16 - 1, 16);
+                B <= to_unsigned(1, 16);
+                Op <= "00";
+                wait for 10 ns;
     
-            -- Test case 4: A = 5, B = 3, Op = "01" (Subtraction) RESULT POSITIVO
+            -- Test case 4: A = 5, B = 3, Op = "01" (subtração) - Resultado esperado: 2
                 A <= to_unsigned(5, 16);
                 B <= to_unsigned(3, 16);
                 Op <= "01";
                 wait for 10 ns;
 
-            -- Test case 5: A = 8, B = 9, Op = "01" (subtraction) RESULT NEGATIVO
+            -- Test case 5: A = -8, B = 9, Op = "01" (subtração) - Resultado esperado: -17
                 A <= to_unsigned(8, 16);
                 B <= to_unsigned(9, 16);
                 Op <= "01";
                 wait for 10 ns;
-
-            -- Test case 6: A = -2^15, B = 1, Op = "01" (subtraction) OVERFLOW DE NEGATIVOS NA SUBTRAÇÃO ------------------
-                -- A <= to_signed(-2**15, 16);
-                -- B <= to_signed(1, 16);
-                -- Op <= "01";
-                -- wait for 10 ns;
-
-            -- Test case 7: A = 2^15 - 1, B = -1, Op = "01" (subtraction) OVERFLOW DE NEGATIVOS NA SUBTRAÇÃO ------------------
-                -- A <= to_signed(2**15 - 1, 16);
-                -- B <= to_signed(-1, 16);
-                -- Op <= "01";
-                -- wait for 10 ns;
     
-            -- Test case 8: A = 6, B = X, Op = "10" (NOT)
+            -- Test case 6: A = 6, B = X, Op = "10" (not)
             A <= to_unsigned(6, 16);
             B <= (others => '0');
             Op <= "10";
             wait for 10 ns;
     
-            -- Test case 9: A = 7, B = 8, Op = "11" (Equality)
+            -- Test case 7: A = 7, B = 8, Op = "11" (iguandaldade)
             A <= to_unsigned(7, 16);
             B <= to_unsigned(8, 16);
             Op <= "11";
             wait for 10 ns;
     
-            -- Test case 10: A = 2^15, B = 2^15, Op = "11" (Equality)
+            -- Test case 8: A = 2^15, B = 2^15, Op = "11" (iguandaldade)
             A <= to_unsigned(2**15, 16);
             B <= to_unsigned(2**15, 16);
             Op <= "11";
