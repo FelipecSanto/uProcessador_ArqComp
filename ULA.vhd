@@ -4,16 +4,14 @@ use ieee.numeric_std.all;
 
 entity ULA is
     Port (
-        -- Entradas e saídas
         A : in unsigned(15 downto 0);
         B : in unsigned(15 downto 0);
         Op : in unsigned(1 downto 0);
         Result : out unsigned(15 downto 0);
         -- Flags
-        CarryOut : out STD_LOGIC;
-        Equal : out STD_LOGIC;
-        Negative : out STD_LOGIC;
-        Overflow : out STD_LOGIC
+        Equal : out std_logic;
+        Negative : out std_logic;
+        Overflow : out std_logic
     );
 end entity;
 
@@ -22,38 +20,41 @@ architecture a_ULA of ULA is
     signal soma : unsigned(16 downto 0);
     signal subtracao : unsigned(16 downto 0);
     signal notA : unsigned(15 downto 0);
-    signal igualdade : unsigned(15 downto 0);
     -- Resultado
     signal resultadoParcial : unsigned(16 downto 0);
+    -- Flags
+    signal V : std_logic;       -- Overflow
+    signal Z : std_logic;       -- Equal
 
 begin
 
-    -- Operações
+    -- OPERAÇÕES
 
-        soma <= ('0'&A) + ('0'&B);
-        subtracao <= ('0'&A) - ('0'&B);
-        notA <= not A;
-        igualdade <= A;
+        soma        <=  ('0' & A) + ('0' & B);      -- SOMA
+        subtracao   <=  ('0' & A) - ('0' & B);      -- SUBTRAÇÃO
+        notA        <=  not A;                      -- NEGAÇÃO DE A
+        Z <= '1' when A = B else '0';               -- IGUALDADE
+
+    -- MULTIPLEXADOR 2x4 PARA ESCOLHA DA OPERAÇÃO
 
         resultadoParcial <= soma            when Op="00" else
                             subtracao       when Op="01" else
-                            ('0'&notA)      when Op="10" else
-                            ('0'&igualdade) when Op="11" else
+                            ('0' & notA)    when Op="10" else
                             "00000000000000000";
 
-    -- Flags
+    -- FLAGS
 
-        Overflow <= '1' when (Op = "00" and A(15) = '1' and B(15) = '1' and resultadoParcial(15) = '0') else
-                    '1' when (Op = "00" and A(15) = '0' and B(15) = '0' and resultadoParcial(15) = '1') else
-                    '0';
+        V <=    '1' when (Op = "00" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
+                '1' when (Op = "01" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
+                '0';
                         
-        Negative <= resultadoParcial(15);
+        Negative <= resultadoParcial(15) when V = '0' else '0';
 
-        CarryOut <= resultadoParcial(16) when Op = "00" else '0';
+        Overflow <= V;
 
-        Equal <= '1' when A = B else '0';
+        Equal <= Z when Op = "11" else '0';
 
-    -- Resultado 
+    -- RESULTADO
 
         Result <=  resultadoParcial (15 downto 0); 
 
