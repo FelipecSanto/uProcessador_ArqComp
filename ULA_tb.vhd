@@ -194,7 +194,7 @@ begin
         Op <= "11";
         wait for 10 ns;
 
-    -- Test case 26: A = 0, B = 0, Op = "11" (AND)
+    -- Test case 26: A = -3, B = -3, Op = "11" (AND)
         A <= to_unsigned(2**16 - 3, 16);
         B <= to_unsigned(2**16 - 3, 16);
         Op <= "11";
