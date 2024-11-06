@@ -20,6 +20,7 @@ architecture a_ULA of ULA is
     signal soma : unsigned(16 downto 0);
     signal subtracao : unsigned(16 downto 0);
     signal notA : unsigned(15 downto 0);
+    signal A_and_B : unsigned (16 downto 0);
     -- Resultado
     signal resultadoParcial : unsigned(16 downto 0);
     -- Flags
@@ -33,26 +34,29 @@ begin
         soma        <=  ('0' & A) + ('0' & B);      -- SOMA
         subtracao   <=  ('0' & A) - ('0' & B);      -- SUBTRAÇÃO
         notA        <=  not A;                      -- NEGAÇÃO DE A
-        Z <= '1' when A = B else '0';               -- IGUALDADE
-
-    -- MULTIPLEXADOR 2x4 PARA ESCOLHA DA OPERAÇÃO
-
+        A_and_B     <=  ('0' & A) and ('0' & B);    -- AND
+        
+        -- MULTIPLEXADOR 2x4 PARA ESCOLHA DA OPERAÇÃO
+        
         resultadoParcial <= soma            when Op="00" else
                             subtracao       when Op="01" else
                             ('0' & notA)    when Op="10" else
+                            A_and_B         when Op="11" else
                             "00000000000000000";
+        
+        -- FLAGS
 
-    -- FLAGS
+        Z <= '1' when A = B else '0';              
 
-        V <=    '1' when (Op = "00" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
-                '1' when (Op = "01" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
-                '0';
+        V <= '1' when (Op = "00" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
+             '1' when (Op = "01" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
+             '0';
                         
         Negative <= resultadoParcial(15) when V = '0' else '0';
 
         Overflow <= V;
 
-        Equal <= Z when Op = "11" else '0';
+        Equal <= Z;
 
     -- RESULTADO
 

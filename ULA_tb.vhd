@@ -170,7 +170,36 @@ begin
         Op <= "11";
         wait for 10 ns;
 
-    -- Stop simulation
+    -- Test case 22: A = 0, B = 0, Op = "11" (AND)
+        A <= to_unsigned(0, 16);
+        B <= to_unsigned(0, 16);
+        Op <= "11";
+        wait for 10 ns;
+
+    -- Test case 23: A = 1, B = 0, Op = "11" (AND)
+        A <= to_unsigned(1, 16);
+        B <= to_unsigned(0, 16);
+        Op <= "11";
+        wait for 10 ns;
+
+    -- Test case 24: A = 1, B = 1, Op = "11" (AND)
+        A <= to_unsigned(1, 16);
+        B <= to_unsigned(1, 16);
+        Op <= "11";
+        wait for 10 ns;
+
+    -- Test case 25: A = 124, B = 12, Op = "11" (AND)
+        A <= to_unsigned(124, 16);
+        B <= to_unsigned(12, 16);
+        Op <= "11";
+        wait for 10 ns;
+
+    -- Test case 26: A = 0, B = 0, Op = "11" (AND)
+        A <= to_unsigned(2**16 - 3, 16);
+        B <= to_unsigned(2**16 - 3, 16);
+        Op <= "11";
+        wait for 10 ns;
+
         wait;
     end process;
 end architecture;
