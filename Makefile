@@ -1,8 +1,8 @@
 # Nome do executável de simulação
-TESTBENCH = ULA_tb
+TESTBENCH = reg_bank_tb
 
 # Arquivos VHDL
-VHDL_FILES = ULA.vhd ULA_tb.vhd
+VHDL_FILES = ULA.vhd ULA_tb.vhd reg16bits.vhd reg16bits_tb.vhd reg_bank.vhd reg_bank_tb.vhd
 
 # Arquivo de dump de simulação
 GHW_FILE = $(TESTBENCH).ghw
@@ -25,10 +25,19 @@ $(TESTBENCH): $(VHDL_FILES)
 	$(GHDL) -e ULA
 	$(GHDL) -a ULA_tb.vhd
 	$(GHDL) -e ULA_tb
+	$(GHDL) -a reg16bits.vhd
+	$(GHDL) -e reg16bits
+	$(GHDL) -a reg16bits_tb.vhd
+	$(GHDL) -e reg16bits_tb
+	$(GHDL) -a reg_bank.vhd
+	$(GHDL) -e reg_bank
+	$(GHDL) -a reg_bank_tb.vhd
+	$(GHDL) -e reg_bank_tb
+
 
 # Regra para executar a simulação e gerar o arquivo GHW
 run: $(TESTBENCH)
-	$(GHDL) -r ULA_tb --wave=$(GHW_FILE)
+	$(GHDL) -r reg_bank_tb --wave=$(GHW_FILE)
 	$(GTKWAVE) $(GHW_FILE)
 
 # Regra para limpar os arquivos gerados
