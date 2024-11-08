@@ -4,28 +4,27 @@ use ieee.numeric_std.all;
 
 entity ULA is
     Port (
-        A : in unsigned(15 downto 0);
-        B : in unsigned(15 downto 0);
-        Op : in unsigned(1 downto 0);
-        Result : out unsigned(15 downto 0);
+        A           : in unsigned(15 downto 0);
+        B           : in unsigned(15 downto 0);
+        Op          : in unsigned(1 downto 0);
+        Result      : out unsigned(15 downto 0);
         -- Flags
-        Equal : out std_logic;
-        Negative : out std_logic;
-        Overflow : out std_logic
+        Equal       : out std_logic;
+        Negative    : out std_logic;
+        Overflow    : out std_logic
     );
 end entity;
 
 architecture a_ULA of ULA is
     -- Operações
-    signal soma : unsigned(16 downto 0);
-    signal subtracao : unsigned(16 downto 0);
-    signal notA : unsigned(15 downto 0);
-    signal A_and_B : unsigned (16 downto 0);
+    signal soma : unsigned(16 downto 0) := (others => '0');
+    signal subtracao : unsigned(16 downto 0) := (others => '0');
+    signal notA : unsigned(15 downto 0) := (others => '0');
+    signal A_and_B : unsigned (16 downto 0) := (others => '0');
     -- Resultado
-    signal resultadoParcial : unsigned(16 downto 0);
+    signal resultadoParcial : unsigned(16 downto 0) := (others => '0');
     -- Flags
-    signal V : std_logic;       -- Overflow
-    signal Z : std_logic;       -- Equal
+    signal V : std_logic := '0';       -- Overflow
 
 begin
 
@@ -44,9 +43,7 @@ begin
                             A_and_B         when Op="11" else
                             "00000000000000000";
         
-        -- FLAGS
-
-        Z <= '1' when A = B else '0';              
+        -- FLAGS           
 
         V <= '1' when (Op = "00" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
              '1' when (Op = "01" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
@@ -56,7 +53,7 @@ begin
 
         Overflow <= V;
 
-        Equal <= Z;
+        Equal <= '1' when A = B else '0';
 
     -- RESULTADO
 

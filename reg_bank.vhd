@@ -16,8 +16,11 @@ end entity;
 
 architecture a_reg_bank of reg_bank is
     type reg_array is array (0 to 5) of unsigned(15 downto 0);
+
     signal regs : reg_array := (others => (others => '0'));
     signal reg_wr_en_signals : unsigned(5 downto 0) := (others => '0');
+
+    signal enable : boolean := false;
 
     component reg16bits
         port(
@@ -31,14 +34,25 @@ architecture a_reg_bank of reg_bank is
 
 begin
 
+    enable <= true when reg_wr_en = '1' else false;
+
     -- Multiplexador para selecionar o registrador de escrita (se o banco de registradores estiber habilitado para escrita)
-    reg_wr_en_signals <= "000001" when (selec_reg_wr = "000" and reg_wr_en = '1') else
-                         "000010" when (selec_reg_wr = "001" and reg_wr_en = '1') else
-                         "000100" when (selec_reg_wr = "010" and reg_wr_en = '1') else
-                         "001000" when (selec_reg_wr = "011" and reg_wr_en = '1') else
-                         "010000" when (selec_reg_wr = "100" and reg_wr_en = '1') else
-                         "100000" when (selec_reg_wr = "101" and reg_wr_en = '1') else
+    reg_wr_en_signals <= "000001" when (selec_reg_wr = "000" and enable) else
+                         "000010" when (selec_reg_wr = "001" and enable) else
+                         "000100" when (selec_reg_wr = "010" and enable) else
+                         "001000" when (selec_reg_wr = "011" and enable) else
+                         "010000" when (selec_reg_wr = "100" and enable) else
+                         "100000" when (selec_reg_wr = "101" and enable) else
                          (others => '0');
+
+    -- Multiplexador para selecionar o registrador de leitura
+    data_r1 <= regs(0) when selec_reg_rd = "000" else
+               regs(1) when selec_reg_rd = "001" else
+               regs(2) when selec_reg_rd = "010" else
+               regs(3) when selec_reg_rd = "011" else
+               regs(4) when selec_reg_rd = "100" else
+               regs(5) when selec_reg_rd = "101" else
+               (others => '0');
 
     -- Instanciação dos registradores
     reg0: reg16bits
@@ -94,14 +108,5 @@ begin
             data_in => data_wr,
             data_out => regs(5)
         );
-
-    -- Multiplexador para selecionar o registrador de leitura
-    data_r1 <= regs(0) when selec_reg_rd = "000" else
-               regs(1) when selec_reg_rd = "001" else
-               regs(2) when selec_reg_rd = "010" else
-               regs(3) when selec_reg_rd = "011" else
-               regs(4) when selec_reg_rd = "100" else
-               regs(5) when selec_reg_rd = "101" else
-               (others => '0');
 
 end architecture;
