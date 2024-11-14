@@ -143,7 +143,7 @@ begin
     -- Test case 17: A = 2^14, B = 2^14, Op = "11" (Igualdade)
         A <= to_unsigned(2**14, 16);
         B <= to_unsigned(2**14, 16);
-        Op <= "11";
+        Op <= "01";
         wait for 10 ns;
 
     -- Test case 18: A = -3, B = 3, Op = "11" (Igualdade)

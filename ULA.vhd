@@ -53,7 +53,7 @@ begin
 
         Overflow <= V;
 
-        Equal <= '1' when A = B else '0';
+        Equal <= '1' when resultadoParcial = to_unsigned(0,16) else '0';
 
     -- RESULTADO
 

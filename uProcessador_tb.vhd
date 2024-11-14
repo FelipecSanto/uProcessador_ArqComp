@@ -40,7 +40,6 @@ architecture a_uProcessador_tb of uProcessador_tb is
     signal finished : std_logic := '0';
 
 begin
-    -- Instanciação da UUT (Unit Under Test)
     uut: uProcessador
         port map (
             clk => clk,
@@ -92,55 +91,59 @@ begin
         -- Esperar o reset
         wait for 2 * clk_period;
 
-        -- Escrever no registrador 0
+        -- Escrever 100 no registrador 0
         regs_en <= '1';
         wr_addr <= "000";
+        rd_addr <= "000";
         data_in <= to_unsigned(100, 16);
         wait for clk_period;
 
-        -- Escrever no registrador 1
+        -- Escrever 150 no registrador 1
         wr_addr <= "001";
+        rd_addr <= "001";
         data_in <= to_unsigned(150, 16);
         wait for clk_period;
 
-        -- Ler do registrador 0 e realizar operação de adição. Também registra 100 no acumulador
+        -- Ler do registrador 0 e realizar operação de adição. Resultado: 100 no acumulador
         acumulador_en <= '1';
         regs_en <= '0';
         rd_addr <= "000";
         ula_op <= "00"; -- Operação de adição
         wait for clk_period;
 
-        -- Ler do registrador 1 e realizar operação de subtração. Também registra 50 no acumulador
+        -- Ler do registrador 1 e realizar operação de subtração. Resultado: registra 50 no acumulador
         rd_addr <= "001";
         ula_op <= "01"; -- Operação de subtração
         wait for clk_period;
 
-        -- Escrever no registrador 2
+        -- Escrever 2 no registrador 2
         acumulador_en <= '0';
         regs_en <= '1';
         wr_addr <= "010";
+        rd_addr <= "010";
         data_in <= to_unsigned(2, 16);
         wait for clk_period;
 
-        -- Ler do registrador 2 e realizar operação de negação. Também registra -3 no acumulador (ou 65.533)
+        -- Ler do registrador 2 e realizar operação de negação. Resultado: registra -3 no acumulador (ou 65.533), que seria o complemento de 2 de 2
+        ula_op <= "10"; -- Operação de negação
         acumulador_en <= '1';
         regs_en <= '0';
         rd_addr <= "010";
-        ula_op <= "10"; -- Operação de negação
         wait for clk_period;
 
-        -- Escrever no registrador 3
+        -- Escrever 11111 no registrador 3
         acumulador_en <= '0';
         regs_en <= '1';
         wr_addr <= "011";
+        rd_addr <= "011";
         data_in <= to_unsigned(11111, 16);
         wait for clk_period;
 
-        -- Ler do registrador 3 e realizar operação AND. Também registra 11109 no acumulador
+        -- Ler do registrador 3 e realizar operação AND. Resultado: registra 11109 no acumulador
+        ula_op <= "11"; -- Operação AND
         acumulador_en <= '1';
         regs_en <= '0';
         rd_addr <= "011";
-        ula_op <= "11"; -- Operação AND
         wait for clk_period;
 
         wait;

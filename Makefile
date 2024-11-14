@@ -41,12 +41,12 @@ $(TESTBENCH): $(VHDL_FILES)
 
 # Regra para executar a simulação e gerar o arquivo GHW
 run: $(TESTBENCH)
-	$(GHDL) -r uProcessador_tb --wave=$(GHW_FILE)
+	$(GHDL) -r $(TESTBENCH) --wave=$(GHW_FILE)
 	$(GTKWAVE) $(GHW_FILE)
 
 # Regra para limpar os arquivos gerados
 clean:
 	@if [ -f work-obj*.cf ]; then rm -f work-obj*.cf; fi
-	@if [ -f $(GHW_FILE) ]; then rm -f $(GHW_FILE); fi
+	@if [ -f $(GHW_FILE) ]; then rm -f *.ghw; fi
 
 .PHONY: all run clean
