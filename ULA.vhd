@@ -9,7 +9,7 @@ entity ULA is
         Op          : in unsigned(1 downto 0);
         Result      : out unsigned(15 downto 0);
         -- Flags
-        Equal       : out std_logic;
+        Zero       : out std_logic;
         Negative    : out std_logic;
         Overflow    : out std_logic
     );
@@ -53,7 +53,7 @@ begin
 
         Overflow <= V;
 
-        Equal <= '1' when resultadoParcial = to_unsigned(0,16) else '0';
+        Zero <= '1' when resultadoParcial = to_unsigned(0,16) else '0';
 
     -- RESULTADO
 

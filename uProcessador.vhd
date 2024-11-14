@@ -7,11 +7,12 @@ entity uProcessador is
         clk             : in std_logic;
         rst             : in std_logic;
         regs_en         : in std_logic;
+        save_in_bank    : in std_logic; -- Escolhe se a saída da ULA deve entrar no acumulador ou salvar no banco
         acumulador_en   : in std_logic;
         wr_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de escrita (3 bits para 6 registradores)
         rd_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de leitura (3 bits para 6 registradores)
         ula_op          : in unsigned(1 downto 0); -- Operação que a ULA faz (00 = Adição, 01 = Subtração, 10 = Negação, 11 = AND)
-        flagEqual       : out std_logic;
+        flagZero        : out std_logic;
         flagNegative    : out std_logic;
         flagOverflow    : out std_logic;
         data_in         : in unsigned(15 downto 0);
@@ -39,7 +40,7 @@ architecture a_uProcessador of uProcessador is
             B           : in unsigned(15 downto 0);
             Op          : in unsigned(1 downto 0);
             Result      : out unsigned(15 downto 0);
-            Equal       : out std_logic;
+            Zero        : out std_logic;
             Negative    : out std_logic;
             Overflow    : out std_logic
         );
@@ -58,8 +59,13 @@ architecture a_uProcessador of uProcessador is
     signal regBank_data_out : unsigned(15 downto 0) := (others => '0');
     signal ula_result : unsigned(15 downto 0) := (others => '0');
     signal acumulador_out : unsigned(15 downto 0) := (others => '0');
+    signal data_in_bank : unsigned(15 downto 0) := (others => '0');
 
 begin
+
+    -- Mux para escolher quando registrar o resultado da ULA no banco
+    data_in_bank <= ula_result when save_in_bank = '1' else data_in;
+
     -- Instanciação do banco de registradores
     reg_bank_inst: reg_bank
         port map (
@@ -68,7 +74,7 @@ begin
             reg_wr_en => regs_en,
             selec_reg_wr => wr_addr,
             selec_reg_rd => rd_addr,
-            data_wr => data_in,
+            data_wr => data_in_bank,
             data_r1 => regBank_data_out
         );
 
@@ -79,7 +85,7 @@ begin
             B => acumulador_out,
             Op => ula_op,
             Result => ula_result,
-            Equal => flagEqual,
+            Zero => flagZero,
             Negative => flagNegative,
             Overflow => flagOverflow
         );

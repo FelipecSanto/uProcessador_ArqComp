@@ -13,7 +13,7 @@ architecture a_ULA_tb of ULA_tb is
             B : in unsigned(15 downto 0);
             Op : in unsigned(1 downto 0);
             Result : out unsigned(15 downto 0);
-            Equal : out std_logic;
+            Zero : out std_logic;
             Negative : out std_logic;
             Overflow : out std_logic
         );
@@ -23,7 +23,7 @@ architecture a_ULA_tb of ULA_tb is
     signal B : unsigned(15 downto 0) := (others => '0');
     signal Op : unsigned(1 downto 0) := (others => '0');
     signal Result : unsigned(15 downto 0);
-    signal Equal : std_logic;
+    signal Zero : std_logic;
     signal Negative : std_logic;
     signal Overflow : std_logic;
 
@@ -35,7 +35,7 @@ begin
             B => B,
             Op => Op,
             Result => Result,
-            Equal => Equal,
+            Zero => Zero,
             Negative => Negative,
             Overflow => Overflow
         );
