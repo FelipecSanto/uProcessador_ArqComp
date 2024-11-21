@@ -24,7 +24,7 @@ architecture a_uProcessador of uProcessador is
         port( 
             clk         : in std_logic;
             PC_rst      : in std_logic;
-            PC_wr_en    : in std_logic;
+            PC_wr_en_i  : in std_logic;
             jump_abs    : in std_logic;
             jump_rel    : in std_logic;
             jump_addr   : in unsigned(6 downto 0);
@@ -37,7 +37,7 @@ architecture a_uProcessador of uProcessador is
         port(
             clk           : in std_logic;
             instruction   : in unsigned(18 downto 0);
-            PC_wr_en      : out std_logic;
+            PC_wr_en_o    : out std_logic;
             jump_abs      : out std_logic;
             jump_rel      : out std_logic;
             jump_addr     : out unsigned(6 downto 0);
@@ -47,7 +47,7 @@ architecture a_uProcessador of uProcessador is
 
     signal data_out_PC : unsigned(6 downto 0) := (others => '0');
     signal data_out_ROM : unsigned(18 downto 0) := (others => '0');
-    signal PC_wr_en : std_logic := '0';
+    signal PC_wr_en_s : std_logic := '0';
     signal jump_abs : std_logic := '0';
     signal jump_rel : std_logic := '0';
     signal jump_addr : unsigned(6 downto 0) := (others => '0');
@@ -58,7 +58,7 @@ begin
         port map (
             clk        => clk,
             PC_rst     => PC_rst,
-            PC_wr_en   => PC_wr_en,
+            PC_wr_en_i => PC_wr_en_s,
             jump_abs   => jump_abs,
             jump_rel   => jump_rel,
             jump_addr  => jump_addr,
@@ -75,13 +75,13 @@ begin
 
     un_controle_inst: un_controle
         port map (
-            clk => clk,
+            clk         => clk,
             instruction => data_out_ROM,
-            PC_wr_en => PC_wr_en,
-            jump_abs => jump_abs,
-            jump_rel => jump_rel,
-            jump_addr => jump_addr,
-            estado => estado
+            PC_wr_en_o  => PC_wr_en_s,
+            jump_abs    => jump_abs,
+            jump_rel    => jump_rel,
+            jump_addr   => jump_addr,
+            estado      => estado
         );
 
     data_out <= data_out_ROM;

@@ -6,7 +6,7 @@ entity PC_adder is
     port( 
        clk         : in std_logic;
        PC_rst      : in std_logic;
-       PC_wr_en    : in std_logic;
+       PC_wr_en_i  : in std_logic;
        jump_abs    : in std_logic;
        jump_rel    : in std_logic;
        jump_addr   : in unsigned(6 downto 0);
@@ -34,7 +34,7 @@ architecture a_PC_adder of PC_adder is
         port map(
             clk      => clk,
             rst      => PC_rst,
-            wr_en    => PC_wr_en,
+            wr_en    => PC_wr_en_i,
             data_in  => PC_data_in,
             data_out => PC_data_out
         );

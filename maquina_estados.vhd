@@ -18,11 +18,7 @@ begin
         if rst='1' then
             estado_s <= '0';
         elsif rising_edge(clk) then
-            if estado_s = '1' then
-                estado_s <= '0';
-            else
-                estado_s <= '1';
-            end if;
+            estado_s <= not estado_s;
         end if;
     end process;
 

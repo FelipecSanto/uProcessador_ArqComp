@@ -11,7 +11,7 @@ architecture a_PC_adder_tb of PC_adder_tb is
     port( 
         clk         : in std_logic;
         PC_rst      : in std_logic;
-        PC_wr_en    : in std_logic;
+        PC_wr_en_i    : in std_logic;
         jump_abs    : in std_logic;
         jump_rel    : in std_logic;
         jump_addr   : in unsigned(6 downto 0);
@@ -22,7 +22,7 @@ architecture a_PC_adder_tb of PC_adder_tb is
 
     signal clk         : std_logic := '0';
     signal PC_rst      : std_logic := '0';
-    signal PC_wr_en    : std_logic := '0';
+    signal PC_wr_en_s    : std_logic := '0';
     signal jump_abs    : std_logic := '0';
     signal jump_rel    : std_logic := '0';
     signal jump_addr   : unsigned(6 downto 0) := (others => '0');
@@ -37,14 +37,14 @@ architecture a_PC_adder_tb of PC_adder_tb is
     -- Instanciação da UUT (Unit Under Test)
     uut: PC_adder
         port map (
-            clk => clk,
-            PC_rst => PC_rst,
-            PC_wr_en => PC_wr_en,
-            jump_abs => jump_abs,
-            jump_rel => jump_rel,
-            jump_addr => jump_addr,
-            data_in => data_in,
-            data_out => data_out
+            clk         => clk,
+            PC_rst      => PC_rst,
+            PC_wr_en_i  => PC_wr_en_s,
+            jump_abs    => jump_abs,
+            jump_rel    => jump_rel,
+            jump_addr   => jump_addr,
+            data_in     => data_in,
+            data_out    => data_out
         );
 
     -- Geração do clock
@@ -79,14 +79,14 @@ architecture a_PC_adder_tb of PC_adder_tb is
         wait for 2 * clk_period;
 
         -- Teste 1: write_enable desabilitado
-        PC_wr_en <= '0';
+        PC_wr_en_s <= '0';
         jump_abs <= '0';
         jump_rel <= '0';
         data_in <= (others => '0');
         wait for clk_period;
 
         -- Teste 2: write_enable habilitado
-        PC_wr_en <= '1';
+        PC_wr_en_s <= '1';
         data_in <= (others => '0');
         wait for clk_period;
 

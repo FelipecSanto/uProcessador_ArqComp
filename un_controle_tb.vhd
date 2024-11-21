@@ -10,21 +10,21 @@ architecture a_un_controle_tb of un_controle_tb is
         port (
             clk           : in std_logic;
             instruction   : in unsigned(18 downto 0);
-            PC_wr_en      : out std_logic;
+            PC_wr_en_o    : out std_logic;
             jump_abs      : out std_logic;
             jump_rel      : out std_logic;
             jump_addr     : out unsigned(6 downto 0);
-            estado       : out std_logic
+            estado        : out std_logic
         );
     end component;
 
     signal clk           : std_logic := '0';
     signal instruction   : unsigned(18 downto 0) := (others => '0');
-    signal PC_wr_en      : std_logic := '0';
+    signal PC_wr_en_s    : std_logic := '0';
     signal jump_abs      : std_logic := '0';
     signal jump_rel      : std_logic := '0';
     signal jump_addr     : unsigned(6 downto 0) := (others => '0');
-    signal estado       : std_logic := '0';
+    signal estado        : std_logic := '0';
 
     constant clk_period : time := 100 ns;
     signal finished : std_logic := '0';
@@ -35,7 +35,7 @@ begin
         port map(
             clk => clk,
             instruction => instruction,
-            PC_wr_en => PC_wr_en,
+            PC_wr_en_o => PC_wr_en_s,
             jump_abs => jump_abs,
             jump_rel => jump_rel,
             jump_addr => jump_addr,

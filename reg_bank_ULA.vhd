@@ -7,7 +7,7 @@ entity reg_bank_ULA is
         clk             : in std_logic;
         rst             : in std_logic;
         regs_en         : in std_logic;
-        save_in_bank    : in std_logic; -- Escolhe se a saída da ULA deve entrar no acumulador ou salvar no banco
+        save_in_bank    : in std_logic; -- Escolhe se a saída da ULA é registrada no banco
         acumulador_en   : in std_logic;
         wr_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de escrita (3 bits para 6 registradores)
         rd_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de leitura (3 bits para 6 registradores)

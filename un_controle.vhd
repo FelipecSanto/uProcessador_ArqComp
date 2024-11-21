@@ -7,7 +7,7 @@ entity un_controle is
         clk: in std_logic;
         instruction: in unsigned(18 downto 0);
         -- PC adder:
-        PC_wr_en      : out std_logic;
+        PC_wr_en_o      : out std_logic;
         jump_abs      : out std_logic;
         jump_rel      : out std_logic;
         jump_addr     : out unsigned(6 downto 0);
@@ -45,7 +45,7 @@ begin
     jump_addr <= instruction(10 downto 4);
 
     -- ATUALIZAR PC
-    PC_wr_en <= '1' when estado_s = '1' else '0';
+    PC_wr_en_o <= '1' when estado_s = '1' else '0';
 
     estado <= estado_s;
 
