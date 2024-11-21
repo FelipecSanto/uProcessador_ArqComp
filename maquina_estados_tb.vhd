@@ -2,36 +2,34 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity uProcessador_tb is
+entity maquina_estados_tb is
 end entity;
 
-architecture a_uProcessador_tb of uProcessador_tb is
-    component uProcessador
+architecture a_maquina_estados_tb of maquina_estados_tb is
+    component maquina_estados
         port(
-            clk         : in std_logic;
-            PC_rst      : in std_logic;
-            data_out    : out unsigned(18 downto 0);
-            estado      : out std_logic
+            clk      : in std_logic;
+            rst      : in std_logic;
+            estado   : out std_logic
         );
     end component;
 
-    signal clk : std_logic := '0';
-    signal PC_rst : std_logic := '0';
-    signal data_out : unsigned(18 downto 0) := (others => '0');
-    signal estado : std_logic := '0';
+    signal clk      : std_logic := '0';
+    signal rst      : std_logic := '0';
+    signal estado   : std_logic := '0';
 
     constant clk_period : time := 100 ns;
     signal finished : std_logic := '0';
 
 begin
-    uut: uProcessador
+
+    uut: maquina_estados
         port map (
             clk => clk,
-            PC_rst => PC_rst,
-            data_out => data_out,
+            rst => rst,
             estado => estado
         );
-
+    
     -- Geração do clock
     process
     begin
@@ -44,10 +42,17 @@ begin
         wait;
     end process;
 
-    -- Processo para definir o tempo de simulação
+    reset_global : process
+    begin
+        rst <= '1';
+        wait for 2 * clk_period;
+        rst <= '0';
+        wait;
+    end process;
+
     sim_time_proc : process
     begin
-        wait for 1200 ns;
+        wait for 1 us;
         finished <= '1';
         wait;
     end process sim_time_proc;
@@ -55,9 +60,11 @@ begin
     -- Estímulos de teste
     stim_proc: process
     begin
-        
-        wait for clk_period*3;
- 
+        -- Esperar o reset
+        wait for 2 * clk_period;
+
+        wait for clk_period*5;
+
         wait;
     end process;
 end architecture;
