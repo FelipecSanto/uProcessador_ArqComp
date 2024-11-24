@@ -6,7 +6,7 @@ entity ULA is
     Port (
         A           : in unsigned(15 downto 0);
         B           : in unsigned(15 downto 0);
-        Op          : in unsigned(1 downto 0);
+        Op          : in unsigned(2 downto 0);
         Result      : out unsigned(15 downto 0);
         -- Flags
         Zero       : out std_logic;
@@ -37,16 +37,16 @@ begin
         
         -- MULTIPLEXADOR 2x4 PARA ESCOLHA DA OPERAÇÃO
         
-        resultadoParcial <= soma            when Op="00" else
-                            subtracao       when Op="01" else
-                            ('0' & notA)    when Op="10" else
-                            A_and_B         when Op="11" else
+        resultadoParcial <= soma            when Op="000" else
+                            subtracao       when Op="001" else
+                            ('0' & notA)    when Op="010" else
+                            A_and_B         when Op="011" else
                             "00000000000000000";
         
         -- FLAGS           
 
-        V <= '1' when (Op = "00" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
-             '1' when (Op = "01" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
+        V <= '1' when (Op = "000" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
+             '1' when (Op = "001" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
              '0';
                         
         Negative <= resultadoParcial(15) when V = '0' else '0';

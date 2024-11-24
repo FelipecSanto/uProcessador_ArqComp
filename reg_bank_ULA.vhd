@@ -4,19 +4,21 @@ use ieee.numeric_std.all;
 
 entity reg_bank_ULA is
     port(
-        clk             : in std_logic;
-        rst             : in std_logic;
-        regs_en         : in std_logic;
-        save_in_bank    : in std_logic; -- Escolhe se a saída da ULA é registrada no banco
-        acumulador_en   : in std_logic;
-        wr_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de escrita (3 bits para 6 registradores)
-        rd_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de leitura (3 bits para 6 registradores)
-        ula_op          : in unsigned(1 downto 0); -- Operação que a ULA faz (00 = Adição, 01 = Subtração, 10 = Negação, 11 = AND)
-        flagZero        : out std_logic;
-        flagNegative    : out std_logic;
-        flagOverflow    : out std_logic;
-        data_in         : in unsigned(15 downto 0);
-        data_out        : out unsigned(15 downto 0)
+        clk                 : in std_logic;
+        rst                 : in std_logic;
+        regs_en             : in std_logic;
+        mov_instruction     : in std_logic;
+        acumulador_en       : in std_logic;
+        wr_addr             : in unsigned(2 downto 0);  -- Seleciona o registrador de escrita (3 bits para 6 registradores)
+        rd_addr             : in unsigned(2 downto 0);  -- Seleciona o registrador de leitura (3 bits para 6 registradores)
+        ula_op              : in unsigned(2 downto 0);  -- Operação que a ULA faz (00 = Adição, 01 = Subtração, 10 = Negação, 11 = AND)
+        data_in_regbank     : in unsigned(15 downto 0);
+        flagZero            : out std_logic;
+        flagNegative        : out std_logic;
+        flagOverflow        : out std_logic;
+        ula_result_o        : out unsigned(15 downto 0);
+        regBank_data_out_o  : out unsigned(15 downto 0);
+        acumulador_out_o    : out unsigned(15 downto 0)
     );
 end entity;
 
@@ -38,7 +40,7 @@ architecture a_reg_bank_ULA of reg_bank_ULA is
         port(
             A           : in unsigned(15 downto 0);
             B           : in unsigned(15 downto 0);
-            Op          : in unsigned(1 downto 0);
+            Op          : in unsigned(2 downto 0);
             Result      : out unsigned(15 downto 0);
             Zero        : out std_logic;
             Negative    : out std_logic;
@@ -56,15 +58,15 @@ architecture a_reg_bank_ULA of reg_bank_ULA is
         );
     end component;
 
-    signal regBank_data_out : unsigned(15 downto 0) := (others => '0');
-    signal ula_result : unsigned(15 downto 0) := (others => '0');
-    signal acumulador_out : unsigned(15 downto 0) := (others => '0');
-    signal data_in_bank : unsigned(15 downto 0) := (others => '0');
+    signal regBank_data_out_s : unsigned(15 downto 0) := (others => '0');
+    signal ula_result_s : unsigned(15 downto 0) := (others => '0');
+    signal acumulador_out_s : unsigned(15 downto 0) := (others => '0');
+    signal data_in_regbank_s : unsigned(15 downto 0) := (others => '0');
 
 begin
 
     -- Mux para escolher quando registrar o resultado da ULA no banco
-    data_in_bank <= ula_result when save_in_bank = '1' else data_in;
+    data_in_regbank_s <= regBank_data_out_s when mov_instruction = '1' else data_in_regbank;
 
     -- Instanciação do banco de registradores
     reg_bank_inst: reg_bank
@@ -74,17 +76,17 @@ begin
             reg_wr_en => regs_en,
             selec_reg_wr => wr_addr,
             selec_reg_rd => rd_addr,
-            data_wr => data_in_bank,
-            data_r1 => regBank_data_out
+            data_wr => data_in_regbank_s,
+            data_r1 => regBank_data_out_s
         );
 
     -- Instanciação da ULA
     ula_inst: ULA
         port map (
-            A => regBank_data_out,
-            B => acumulador_out,
+            A => acumulador_out_s,
+            B => regBank_data_out_s,
             Op => ula_op,
-            Result => ula_result,
+            Result => ula_result_s,
             Zero => flagZero,
             Negative => flagNegative,
             Overflow => flagOverflow
@@ -96,11 +98,13 @@ begin
             clk => clk,
             rst => rst,
             wr_en => acumulador_en,
-            data_in => ula_result,
-            data_out => acumulador_out
+            data_in => ula_result_s,
+            data_out => acumulador_out_s
         );
 
     -- Saída de dados
-    data_out <= ula_result;
+    ula_result_o <= ula_result_s;
+    regBank_data_out_o <= regBank_data_out_s;
+    acumulador_out_o <= acumulador_out_s;
 
 end architecture;

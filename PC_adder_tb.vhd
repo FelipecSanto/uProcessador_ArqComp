@@ -11,10 +11,10 @@ architecture a_PC_adder_tb of PC_adder_tb is
     port( 
         clk         : in std_logic;
         PC_rst      : in std_logic;
-        PC_wr_en_i    : in std_logic;
-        jump_abs    : in std_logic;
-        jump_rel    : in std_logic;
-        jump_addr   : in unsigned(6 downto 0);
+        PC_wr_en_i  : in std_logic;
+        jump_abs_i  : in std_logic;
+        jump_rel_i  : in std_logic;
+        jump_addr_i : in unsigned(6 downto 0);
         data_in     : in unsigned(6 downto 0);
         data_out    : out unsigned(6 downto 0)
     );
@@ -40,9 +40,9 @@ architecture a_PC_adder_tb of PC_adder_tb is
             clk         => clk,
             PC_rst      => PC_rst,
             PC_wr_en_i  => PC_wr_en_s,
-            jump_abs    => jump_abs,
-            jump_rel    => jump_rel,
-            jump_addr   => jump_addr,
+            jump_abs_i  => jump_abs,
+            jump_rel_i  => jump_rel,
+            jump_addr_i => jump_addr,
             data_in     => data_in,
             data_out    => data_out
         );

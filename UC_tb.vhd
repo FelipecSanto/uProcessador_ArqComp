@@ -2,19 +2,26 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity un_controle_tb is
+entity UC_tb is
 end entity;
 
-architecture a_un_controle_tb of un_controle_tb is
-    component un_controle
+architecture a_UC_tb of UC_tb is
+    component UC
         port (
-            clk           : in std_logic;
-            instruction   : in unsigned(18 downto 0);
-            PC_wr_en_o    : out std_logic;
-            jump_abs      : out std_logic;
-            jump_rel      : out std_logic;
-            jump_addr     : out unsigned(6 downto 0);
-            estado        : out std_logic
+            clk                 : in std_logic;
+            instruction         : in unsigned(18 downto 0);
+            PC_wr_en_o          : out std_logic;
+            jump_abs_o          : out std_logic;
+            jump_rel_o          : out std_logic;
+            jump_addr_o         : out unsigned(6 downto 0);
+            op_ULA              : out unsigned(2 downto 0);
+            wr_addr_o           : out unsigned(2 downto 0);
+            rd_addr_o           : out unsigned(2 downto 0);
+            data_in_regbank_o   : out unsigned(15 downto 0);
+            regs_en_o           : out std_logic;
+            acumulador_en_o     : out std_logic;
+            mov_instruction_o   : out std_logic;
+            estado              : out unsigned(1 downto 0)
         );
     end component;
 
@@ -24,21 +31,28 @@ architecture a_un_controle_tb of un_controle_tb is
     signal jump_abs      : std_logic := '0';
     signal jump_rel      : std_logic := '0';
     signal jump_addr     : unsigned(6 downto 0) := (others => '0');
-    signal estado        : std_logic := '0';
+    signal estado        : unsigned(1 downto 0) := (others => '0');
 
     constant clk_period : time := 100 ns;
     signal finished : std_logic := '0';
 
 begin
 
-    uut: un_controle
+    uut: UC
         port map(
             clk => clk,
             instruction => instruction,
             PC_wr_en_o => PC_wr_en_s,
-            jump_abs => jump_abs,
-            jump_rel => jump_rel,
-            jump_addr => jump_addr,
+            jump_abs_o => jump_abs,
+            jump_rel_o => jump_rel,
+            jump_addr_o => jump_addr,
+            op_ULA => open,
+            wr_addr_o => open,
+            rd_addr_o => open,
+            data_in_regbank_o => open,
+            regs_en_o => open,
+            acumulador_en_o => open,
+            mov_instruction_o => open,
             estado => estado
         );
 

@@ -7,9 +7,9 @@ entity PC_adder is
        clk         : in std_logic;
        PC_rst      : in std_logic;
        PC_wr_en_i  : in std_logic;
-       jump_abs    : in std_logic;
-       jump_rel    : in std_logic;
-       jump_addr   : in unsigned(6 downto 0);
+       jump_abs_i  : in std_logic;
+       jump_rel_i  : in std_logic;
+       jump_addr_i : in unsigned(6 downto 0);
        data_in     : in unsigned(6 downto 0);
        data_out    : out unsigned(6 downto 0)
     );
@@ -26,8 +26,8 @@ architecture a_PC_adder of PC_adder is
         );
     end component;
 
-    signal PC_data_in  : unsigned(6 downto 0);
-    signal PC_data_out : unsigned(6 downto 0);
+    signal PC_data_in  : unsigned(6 downto 0) := (others => '0');
+    signal PC_data_out : unsigned(6 downto 0) := (others => '0');
 
     begin
         PC_inst: PC
@@ -39,8 +39,8 @@ architecture a_PC_adder of PC_adder is
             data_out => PC_data_out
         );
 
-        PC_data_in <= jump_addr when jump_abs = '1' else
-                      PC_data_out + jump_addr when jump_rel = '1' else
+        PC_data_in <= jump_addr_i when jump_abs_i = '1' else
+                      PC_data_out + jump_addr_i when jump_rel_i = '1' else
                       PC_data_out + "0000001";
 
         data_out <= PC_data_out;

@@ -8,19 +8,21 @@ end entity;
 architecture a_reg_bank_ULA_tb of reg_bank_ULA_tb is
     component reg_bank_ULA
         port(
-            clk             : in std_logic;
-            rst             : in std_logic;
-            regs_en         : in std_logic;
-            save_in_bank    : in std_logic;
-            acumulador_en   : in std_logic;
-            wr_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de escrita (3 bits para 6 registradores)
-            rd_addr         : in unsigned(2 downto 0); -- Seleciona o registrador de leitura (3 bits para 6 registradores)
-            ula_op          : in unsigned(1 downto 0); -- Operação que a ULA faz (00 = Adição, 01 = Subtração, 10 = Negação, 11 = AND)
-            flagZero       : out std_logic;
-            flagNegative    : out std_logic;
-            flagOverflow    : out std_logic;
-            data_in         : in unsigned(15 downto 0);
-            data_out        : out unsigned(15 downto 0)
+            clk                 : in std_logic;
+            rst                 : in std_logic;
+            regs_en             : in std_logic;
+            mov_instruction     : in std_logic;
+            acumulador_en       : in std_logic;
+            wr_addr             : in unsigned(2 downto 0); -- Seleciona o registrador de escrita (3 bits para 6 registradores)
+            rd_addr             : in unsigned(2 downto 0); -- Seleciona o registrador de leitura (3 bits para 6 registradores)
+            ula_op              : in unsigned(2 downto 0); -- Operação que a ULA faz (00 = Adição, 01 = Subtração, 10 = Negação, 11 = AND)
+            data_in_regbank     : in unsigned(15 downto 0);
+            flagZero            : out std_logic;
+            flagNegative        : out std_logic;
+            flagOverflow        : out std_logic;
+            ula_result_o        : out unsigned(15 downto 0);
+            regBank_data_out_o  : out unsigned(15 downto 0);
+            acumulador_out_o    : out unsigned(15 downto 0)
         );
     end component;
 
@@ -31,12 +33,14 @@ architecture a_reg_bank_ULA_tb of reg_bank_ULA_tb is
     signal acumulador_en : std_logic := '0';
     signal wr_addr : unsigned(2 downto 0) := (others => '0');
     signal rd_addr : unsigned(2 downto 0) := (others => '0');
-    signal ula_op : unsigned(1 downto 0) := (others => '0');
+    signal ula_op : unsigned(2 downto 0) := (others => '0');
     signal Zero : std_logic := '0';
     signal Negative : std_logic := '0';
     signal Overflow : std_logic := '0';
     signal data_in : unsigned(15 downto 0) := (others => '0');
-    signal data_out : unsigned(15 downto 0);
+    signal ula_result_s : unsigned(15 downto 0);
+    signal regBank_data_out_s : unsigned(15 downto 0);
+    signal acumulador_out_s : unsigned(15 downto 0);
 
     constant clk_period : time := 100 ns;
     signal finished : std_logic := '0';
@@ -55,8 +59,10 @@ begin
             flagZero => Zero,   
             flagNegative => Negative,
             flagOverflow => Overflow,
-            data_in => data_in,
-            data_out => data_out
+            data_in_regbank => data_in,
+            ula_result_o => ula_result_s       
+            regBank_data_out_o => regBank_data_out_s,
+            acumulador_out_o => acumulador_out_s
         );
 
     -- Geração do clock
@@ -111,7 +117,7 @@ begin
         acumulador_en <= '1';
         regs_en <= '0';
         rd_addr <= "000";
-        ula_op <= "00"; -- Operação de adição
+        ula_op <= "000"; -- Operação de adição
         wait for clk_period;
 
         -- Ler do registrador 1 e realizar operação de subtração. Resultado: registra 50 no acumulador e no registrador 5
@@ -119,7 +125,7 @@ begin
         regs_en <= '1';
         rd_addr <= "001";
         wr_addr <= "101";
-        ula_op <= "01"; -- Operação de subtração
+        ula_op <= "001"; -- Operação de subtração
         wait for clk_period;
 
         -- Escrever 2 no registrador 2
@@ -132,7 +138,7 @@ begin
         wait for clk_period;
 
         -- Ler do registrador 2 e realizar operação de negação. Resultado: registra -3 no acumulador (ou 65.533), que seria o complemento de 2 de 2
-        ula_op <= "10"; -- Operação de negação
+        ula_op <= "010"; -- Operação de negação
         acumulador_en <= '1';
         regs_en <= '0';
         rd_addr <= "010";
@@ -147,7 +153,7 @@ begin
         wait for clk_period;
 
         -- Ler do registrador 3 e realizar operação AND. Resultado: registra 11109 no acumulador
-        ula_op <= "11"; -- Operação AND
+        ula_op <= "011"; -- Operação AND
         acumulador_en <= '1';
         regs_en <= '0';
         rd_addr <= "011";

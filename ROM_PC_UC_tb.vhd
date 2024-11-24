@@ -8,15 +8,18 @@ end entity;
 architecture a_uProcessador_tb of uProcessador_tb is
     component uProcessador
         port(
-            clk         : in std_logic;
-            PC_rst      : in std_logic;
-            data_out    : out unsigned(18 downto 0);
-            estado      : out std_logic
+            clk                 : in std_logic;
+            PC_rst              : in std_logic;
+            data_out_PC         : out unsigned(6 downto 0);
+            instruction_reg_o   : out unsigned(18 downto 0);
+            op_ULA_o            : out unsigned(2 downto 0);
+            estado              : out std_logic
         );
     end component;
 
     signal clk : std_logic := '0';
     signal PC_rst : std_logic := '0';
+    signal data_out_PC_s : unsigned(6 downto 0) := (others => '0');
     signal data_out : unsigned(18 downto 0) := (others => '0');
     signal estado : std_logic := '0';
 
@@ -28,7 +31,9 @@ begin
         port map (
             clk => clk,
             PC_rst => PC_rst,
-            data_out => data_out,
+            data_out_PC => data_out_PC_s,
+            instruction_reg_o => data_out,
+            op_ULA_o => open,
             estado => estado
         );
 
@@ -47,7 +52,7 @@ begin
     -- Processo para definir o tempo de simulação
     sim_time_proc : process
     begin
-        wait for 1200 ns;
+        wait for 1650 ns;
         finished <= '1';
         wait;
     end process sim_time_proc;
