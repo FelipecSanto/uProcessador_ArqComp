@@ -41,7 +41,7 @@ begin
                             subtracao       when Op="001" else
                             ('0' & notA)    when Op="010" else
                             A_and_B         when Op="011" else
-                            "00000000000000000";
+                            "00000000000000001";
         
         -- FLAGS           
 

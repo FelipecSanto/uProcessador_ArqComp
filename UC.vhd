@@ -49,44 +49,48 @@ begin
         );
     
     ------------------------------------------- DECODIFICAÇÃO DA INSTRUÇÃO ----------------------------------------------------------
+    
 
     funct <= instruction(6 downto 4);
     opcode <= instruction(3 downto 0);
 
-
-    -- OPERAÇÕES ARITMÉTICAS
-    op_ULA <=   "000" when (opcode = "0000" and funct = "000") else             -- ADD A, R0    A = A + R0
-                "001" when (opcode = "0000" and funct = "001") else             -- SUB A, R0    A = A - R0
+    -- OPERAÇÕES DE ULA
+                -- OPERAÇÕES ARITMÉTICAS
+    op_ULA <=   "000" when (opcode = "0001" and funct = "000") else             -- ADD A, Rn    A = A + Rn
+                "001" when (opcode = "0001" and funct = "001") else             -- SUB A, Rn    A = A - Rn
+                
+                -- OPERAÇÕES LÓGICAS
+                "010" when (opcode = "0010" and funct = "000") else             -- NEG A       A = ~A
+                "011" when (opcode = "0010" and funct = "001") else             -- AND A, Rn   A = A & Rn
                 "100";
-    rd_addr_o <= instruction(9 downto 7) when (opcode = "0000") else
-                 (others => '0');
 
+    -- ENDEREÇO DO REGISTRADOR A SER LIDO E INSERIDO NO OPERANDO B DA ULA
+    rd_addr_o <= instruction(9 downto 7) when (opcode = "0001"              -- OPERAÇÕES ARITMÉTICAS (LENDO Rn)
+                                               or opcode = "0010"           -- OPERAÇÕES LÓGICAS (PARA O NEG ESSE VALOR É IRRELEVANTE)
+                                               or opcode = "0100") else     -- MOV Rn, Rm   Rn = Rm (LENDO Rm)
+                 "111";
+
+
+    -- HABILITA O ACUMULADOR PARA AS OPERAÇÕES DE ULA (GAMBIARRA PARA ESCREVER NO ACUMULADOR EM CASO DE MOV A, Rn)
+    acumulador_en_o <= '1' when (opcode = "0001" or opcode = "0010" or (opcode = "0100" and instruction(12 downto 10) = "110")) else '0';
+
+
+    -- HABILITA A ESCRITA NO BANCO DE REGISTRADORES
+    regs_en_o <= '1' when ((opcode = "0011" and funct = "000")                  -- LD Rn,cte
+                            or (opcode = "0100" and funct = "000")) else '0';   -- MOV Rn, Rm
+
+
+    -- ENDEREÇO DO REGISTRADOR A SER ESCRITO
+    wr_addr_o <= instruction(9 downto 7) when (opcode = "0011") else            -- LD Rn,cte    Rn = cte (instruction(9 downto 7) é irrelevante)
+                 instruction(12 downto 10) when (opcode = "0100") else          -- MOV Rn, Rm   Rn = Rm
+                 (others => '0');
     
-    -- OPERAÇÕES LÓGICAS
-    op_ULA <=   "010" when (opcode = "0001" and funct = "000") else             -- NEG A       A = ~A
-                "011" when (opcode = "0001" and funct = "001") else             -- AND A, R0   A = A & R0
-                "100";
-    rd_addr_o <= instruction(9 downto 7) when (opcode = "0001") else
-                 (others => '0');
+    -- CONSTANTE PRESENTE NA INSTRUÇÃO LD A SER ESCRITA NO BANCO DE REGISTRADORES
+    data_in_regbank_o <= "0000000" & instruction(18 downto 10) when (opcode = "0011") else 
+                         (others => '0');
 
-    acumulador_en_o <= '1' when (opcode = "0001" or opcode = "0000") else '0';  -- Habilita o acumulador para operações da ULA
-
-
-    -- LD R0,cte    R0 = cte
-    regs_en_o <= '1' when (opcode = "0010" and funct = "000") else '0';     -- Habilita a escrita no banco de registradores
-    wr_addr_o <= instruction(9 downto 7) when (opcode = "0010") else        -- Escreve no registrador com endereco wr_addr_o
-                 (others => '0');
-    
-    data_in_regbank_o <= "0000000" & instruction(18 downto 10) when (opcode = "0010") -- Constante a ser escrita no registrador wr_addr_o
-                        else (others => '0');
-
-    -- MOV R0, R1    R0 = R1 
-    regs_en_o <= '1' when (opcode = "0011" and funct = "000") else '0';     -- Habilita a escrita no banco de registradores
-    wr_addr_o <= instruction(12 downto 10) when (opcode = "0011") else      -- Escreve no registrador com endereco wr_addr_o (R0)
-                 (others => '0');
-    rd_addr_o <= instruction(9 downto 7) when (opcode = "0011") else        -- Leitura do registrador com endereco rd_addr_o (R1)
-                 (others => '0');
-    mov_instruction_o <= '1' when (opcode = "0011") else '0';               --
+    -- MOV Rn, Rm    Rn = Rm (QUANDO 1 FAZ A SAIDA DO BANCO DE REGISTRADORES QUE SERÁ Rm SE TORNAR A ENTRADA DO BANCO DE REGISTRADORES)
+    mov_instruction_o <= '1' when (opcode = "0100") else '0';
 
     -- JUMPS
     jump_abs_o <=   '1' when (opcode = "1111" and funct = "000") else '0';  -- Pula para a instrução jump_addr_o
@@ -94,10 +98,11 @@ begin
     jump_addr_o <=  instruction(13 downto 7) when (opcode = "1111") else
                     (others => '0');
 
-    
+
+    ------------------------------------------- DECODIFICAÇÃO DA INSTRUÇÃO ----------------------------------------------------------
     
     -- ATUALIZAR PC
-    PC_wr_en_o <= '1' when estado_s = '01' else '0';
+    PC_wr_en_o <= '1' when estado_s = '10' else '0';
 
     estado <= estado_s;
 

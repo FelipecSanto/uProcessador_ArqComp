@@ -60,13 +60,19 @@ architecture a_reg_bank_ULA of reg_bank_ULA is
 
     signal regBank_data_out_s : unsigned(15 downto 0) := (others => '0');
     signal ula_result_s : unsigned(15 downto 0) := (others => '0');
+    signal acumulador_in_s : unsigned(15 downto 0) := (others => '0');
     signal acumulador_out_s : unsigned(15 downto 0) := (others => '0');
     signal data_in_regbank_s : unsigned(15 downto 0) := (others => '0');
 
 begin
 
-    -- Mux para escolher quando registrar o resultado da ULA no banco
-    data_in_regbank_s <= regBank_data_out_s when mov_instruction = '1' else data_in_regbank;
+    -- Mux para escolher o dado de entrada do banco de registradores
+    data_in_regbank_s <= regBank_data_out_s when (mov_instruction = '1' and rd_addr /= "110") else  -- SE A INSTRUÇÃO FOR MOV E NÃO FOR PARA O ACUMULADOR (MOV Rn, Rm)
+                         acumulador_out_s   when (mov_instruction = '1' and rd_addr = "110") else   -- SE A INSTRUÇÃO FOR MOV E FOR PARA O ACUMULADOR (MOV Rn, A)
+                         data_in_regbank;
+
+    acumulador_in_s <= regBank_data_out_s when (mov_instruction = '1' and wr_addr = "110") else  -- SE A INSTRUÇÃO FOR MOV E FOR PARA O ACUMULADOR (MOV A, Rn)
+                       ula_result_s;
 
     -- Instanciação do banco de registradores
     reg_bank_inst: reg_bank
@@ -98,7 +104,7 @@ begin
             clk => clk,
             rst => rst,
             wr_en => acumulador_en,
-            data_in => ula_result_s,
+            data_in => acumulador_in_s,
             data_out => acumulador_out_s
         );
 
