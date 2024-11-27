@@ -39,6 +39,8 @@ architecture a_UC of UC is
     signal funct    : unsigned(2 downto 0) := (others => '0');
     signal rst_s    : std_logic := '0';
     signal estado_s : unsigned(1 downto 0) := (others => '0');
+    signal acumulador_en_s : boolean := false;
+
 begin
 
     maq_estados: maquina_estados
@@ -72,7 +74,9 @@ begin
 
 
     -- HABILITA O ACUMULADOR PARA AS OPERAÇÕES DE ULA (GAMBIARRA PARA ESCREVER NO ACUMULADOR EM CASO DE MOV A, Rn)
-    acumulador_en_o <= '1' when (opcode = "0001" or opcode = "0010" or (opcode = "0100" and instruction(12 downto 10) = "110")) else '0';
+    acumulador_en_s <= (opcode = "0001" or opcode = "0010" or (opcode = "0100" and instruction(12 downto 10) = "110"));
+
+    acumulador_en_o <= '1' when (acumulador_en_s and estado_s = "10") else '0';
 
 
     -- HABILITA A ESCRITA NO BANCO DE REGISTRADORES
@@ -102,7 +106,7 @@ begin
     ------------------------------------------- DECODIFICAÇÃO DA INSTRUÇÃO ----------------------------------------------------------
     
     -- ATUALIZAR PC
-    PC_wr_en_o <= '1' when estado_s = '10' else '0';
+    PC_wr_en_o <= '1' when estado_s = "10" else '0';
 
     estado <= estado_s;
 

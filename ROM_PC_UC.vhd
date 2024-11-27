@@ -20,7 +20,8 @@ entity ROM_PC_UC is
 end entity;
 
 architecture a_ROM_PC_UC of ROM_PC_UC is
-    component instruction_reg is
+
+    component instruction_reg
         port( 
            clk      : in std_logic;
            rst      : in std_logic;
@@ -103,7 +104,7 @@ begin
     instruction_reg_inst: instruction_reg
         port map (
             clk      => clk,
-            rst      => '0',
+            rst      => PC_rst,
             wr_en    => '1',
             data_in  => instruction_s,
             data_out => instruction_reg_s
@@ -127,5 +128,10 @@ begin
             estado              => estado
         );
 
-        instruction_reg_o <= instruction_reg_s; -- Para visualização
+        -- Conexões com os pinos de saída
+        instruction_reg_o <= instruction_reg_s; 
+        data_out_PC <= address_instruction;
+        op_ULA_o <= op_ULA_s;
+
+
 end architecture;

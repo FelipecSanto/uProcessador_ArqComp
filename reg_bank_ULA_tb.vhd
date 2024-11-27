@@ -29,7 +29,7 @@ architecture a_reg_bank_ULA_tb of reg_bank_ULA_tb is
     signal clk : std_logic := '0';
     signal rst : std_logic := '0';
     signal regs_en : std_logic := '0';
-    signal save_in_bank : std_logic := '0';
+    signal mov_instruction_s : std_logic := '0';
     signal acumulador_en : std_logic := '0';
     signal wr_addr : unsigned(2 downto 0) := (others => '0');
     signal rd_addr : unsigned(2 downto 0) := (others => '0');
@@ -38,9 +38,9 @@ architecture a_reg_bank_ULA_tb of reg_bank_ULA_tb is
     signal Negative : std_logic := '0';
     signal Overflow : std_logic := '0';
     signal data_in : unsigned(15 downto 0) := (others => '0');
-    signal ula_result_s : unsigned(15 downto 0);
-    signal regBank_data_out_s : unsigned(15 downto 0);
-    signal acumulador_out_s : unsigned(15 downto 0);
+    signal ula_result_s : unsigned(15 downto 0) := (others => '0');
+    signal regBank_data_out_s : unsigned(15 downto 0) := (others => '0');
+    signal acumulador_out_s : unsigned(15 downto 0) := (others => '0');
 
     constant clk_period : time := 100 ns;
     signal finished : std_logic := '0';
@@ -51,7 +51,7 @@ begin
             clk => clk,
             rst => rst,
             regs_en => regs_en,
-            save_in_bank => save_in_bank,
+            mov_instruction => mov_instruction_s,
             acumulador_en => acumulador_en,
             wr_addr => wr_addr,
             rd_addr => rd_addr,
@@ -60,7 +60,7 @@ begin
             flagNegative => Negative,
             flagOverflow => Overflow,
             data_in_regbank => data_in,
-            ula_result_o => ula_result_s       
+            ula_result_o => ula_result_s,       
             regBank_data_out_o => regBank_data_out_s,
             acumulador_out_o => acumulador_out_s
         );
@@ -121,7 +121,7 @@ begin
         wait for clk_period;
 
         -- Ler do registrador 1 e realizar operação de subtração. Resultado: registra 50 no acumulador e no registrador 5
-        save_in_bank <= '1';
+        mov_instruction_s <= '1';
         regs_en <= '1';
         rd_addr <= "001";
         wr_addr <= "101";
@@ -129,7 +129,7 @@ begin
         wait for clk_period;
 
         -- Escrever 2 no registrador 2
-        save_in_bank <= '0';
+        mov_instruction_s <= '0';
         acumulador_en <= '0';
         regs_en <= '1';
         wr_addr <= "010";

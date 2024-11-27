@@ -1,8 +1,8 @@
 # Nome do executável de simulação
-TESTBENCH = Processador_tb
+TESTBENCH = processador_tb
 
 # Arquivos VHDL
-VHDL_FILES = ULA.vhd ULA_tb.vhd reg16bits.vhd reg16bits_tb.vhd reg_bank.vhd reg_bank_tb.vhd ROM.vhd ROM_tb.vhd reg1bit.vhd reg1bit_tb.vhd PC.vhd PC_tb.vhd PC_adder.vhd PC_adder_tb.vhd reg_bank_ULA.vhd reg_bank_ULA_tb.vhd maquina_estados.vhd maquina_estados_tb.vhd UC.vhd UC_tb.vhd ROM_PC_UC.vhd ROM_PC_UC_tb.vhd Processador.vhd
+VHDL_FILES = ULA.vhd ULA_tb.vhd reg16bits.vhd reg16bits_tb.vhd reg_bank.vhd reg_bank_tb.vhd ROM.vhd ROM_tb.vhd reg1bit.vhd reg1bit_tb.vhd PC.vhd PC_tb.vhd PC_adder.vhd PC_adder_tb.vhd reg_bank_ULA.vhd reg_bank_ULA_tb.vhd maquina_estados.vhd maquina_estados_tb.vhd UC.vhd UC_tb.vhd instruction_reg.vhd ROM_PC_UC.vhd ROM_PC_UC_tb.vhd processador.vhd processador_tb.vhd
 
 # Arquivo de dump de simulação
 GHW_FILE = $(TESTBENCH).ghw
@@ -61,12 +61,16 @@ $(TESTBENCH): $(VHDL_FILES)
 	$(GHDL) -e UC
 	$(GHDL) -a UC_tb.vhd
 	$(GHDL) -e UC_tb
+	$(GHDL) -a instruction_reg.vhd
+	$(GHDL) -e instruction_reg
 	$(GHDL) -a ROM_PC_UC.vhd
 	$(GHDL) -e ROM_PC_UC
 	$(GHDL) -a ROM_PC_UC_tb.vhd
 	$(GHDL) -e ROM_PC_UC_tb
-	$(GHDL) -a Processador.vhd
-	$(GHDL) -e Processador
+	$(GHDL) -a processador.vhd
+	$(GHDL) -e processador
+	$(GHDL) -a processador_tb.vhd
+	$(GHDL) -e processador_tb
 
 
 

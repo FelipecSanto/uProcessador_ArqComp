@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Processador is
+entity processador is
     port(
         clk             : in std_logic;
         rst             : in std_logic;
@@ -11,11 +11,11 @@ entity Processador is
         regBank_out     : out unsigned(15 downto 0);
         acumulador_out  : out unsigned(15 downto 0);
         instruction_o   : out unsigned(18 downto 0);
-        estado          : out unsigned(1 downto 0)
+        estado_o        : out unsigned(1 downto 0)
     );
 end entity;
 
-architecture a_Processador of Processador is
+architecture a_processador of processador is
 
     component ROM_PC_UC
         port(
@@ -62,7 +62,7 @@ architecture a_Processador of Processador is
     signal flagOverflow_s : std_logic := '0';
     signal wr_addr_s : unsigned(2 downto 0) := (others => '0');
     signal rd_addr_s : unsigned(2 downto 0) := (others => '0');
-    signal ula_op_s : unsigned(1 downto 0) := (others => '0');
+    signal ula_op_s : unsigned(2 downto 0) := (others => '0');
     signal data_in_regbank_s : unsigned(15 downto 0) := (others => '0');
     signal mov_instruction_s : std_logic := '0';
 
@@ -81,7 +81,7 @@ begin
             regs_en => regs_en_s,
             acumulador_en => acumulador_en_s,
             mov_instruction_out => mov_instruction_s,
-            estado => estado
+            estado => estado_o
         );
 
     -- Instanciação do reg_bank_ULA
@@ -99,9 +99,11 @@ begin
             flagZero => flagZero_s,
             flagNegative => flagNegative_s,
             flagOverflow => flagOverflow_s,
-            ula_result_o => result_ula_o
+            ula_result_o => result_ula_o,
             regBank_data_out_o => regBank_out,
             acumulador_out_o => acumulador_out
         );
+
+    instruction_o <= instruction_s;
 
 end architecture;

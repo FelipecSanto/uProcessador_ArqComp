@@ -11,7 +11,7 @@ entity maquina_estados is
 end entity;
 
 architecture a_maquina_estados of maquina_estados is
-   signal estado_s: unsigned(1 downto 0);
+   signal estado_s: unsigned(1 downto 0) := (others => '0');
 begin
    process(clk,rst)
    begin
