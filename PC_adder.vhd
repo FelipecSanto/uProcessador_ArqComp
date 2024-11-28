@@ -26,7 +26,8 @@ architecture a_PC_adder of PC_adder is
         );
     end component;
 
-    signal PC_data_in  : unsigned(6 downto 0) := (others => '0');
+    signal PC_data_in  : unsigned(7 downto 0) := (others => '0');
+    signal PC_data_in_s: unsigned(6 downto 0) := (others => '0');
     signal PC_data_out : unsigned(6 downto 0) := (others => '0');
 
     begin
@@ -35,12 +36,17 @@ architecture a_PC_adder of PC_adder is
             clk      => clk,
             rst      => PC_rst,
             wr_en    => PC_wr_en_i,
-            data_in  => PC_data_in,
+            data_in  => PC_data_in_s,
             data_out => PC_data_out
         );
 
-        PC_data_in <= jump_addr_i when jump_abs_i = '1' else
-                      PC_data_out + jump_addr_i when jump_rel_i = '1' else
+        -- PARA QUANDO O ENDEREÇO DA ROM A SER PEGO FOR NEGATIVO
+        PC_data_in_s <= (others => '0') when PC_data_in(6) = '1' else 
+                        PC_data_in(6 downto 0);
+
+        -- ATUALIZAÇÃO DO PC
+        PC_data_in <= ('0' & jump_addr_i) when jump_abs_i = '1' else
+                      ('0' & PC_data_out) + ('0' & jump_addr_i) when jump_rel_i = '1' else
                       PC_data_out + "0000001";
 
         data_out <= PC_data_out;
