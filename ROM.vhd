@@ -28,7 +28,7 @@ architecture a_ROM of ROM is
       7  => B"000000000_000_000_0001",    -- D: Soma R0 com A e guarda em A
       8  => B"000000_011_110_000_0100",   -- D: Copia A para R3
       9  => B"000011110_110_000_0011",    -- E: Carrega A com 30
-      10 => B"000000000_011_000_0101",    -- E: Faz o CMPI R3, A (R3 - A)
+      10 => B"000000000_011_000_0101",    -- E: Faz o CMPI R3, A (R3 - A, ou seja, R3 - 30)
       11 => B"00000_1110111_010_1111",    -- E: Faz o jump relativo para C se R3<30 (bmi)
       12 => B"000000_101_100_000_0100",   -- F: Copia R4 para R5
       -- abaixo: casos omissos => (zero em todos os bits)
