@@ -23,8 +23,6 @@ architecture a_ULA of ULA is
     signal A_and_B : unsigned (16 downto 0) := (others => '0');
     -- Resultado
     signal resultadoParcial : unsigned(16 downto 0) := (others => '0');
-    -- Flags
-    signal V : std_logic := '0';       -- Overflow
 
 begin
 
@@ -45,13 +43,11 @@ begin
         
         -- FLAGS           
 
-        V <= '1' when (Op = "000" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
-             '1' when (Op = "001" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
-             '0';
+        Overflow <= '1' when (Op = "000" and A(15) = B(15) and resultadoParcial(15) /= A(15)) else
+                    '1' when (Op = "001" and A(15) /= B(15) and resultadoParcial(15) /= A(15)) else
+                    '0';
                         
-        Negative <= resultadoParcial(15) when V = '0' else '0';
-
-        Overflow <= V;
+        Negative <= resultadoParcial(15);
 
         Zero <= '1' when resultadoParcial = to_unsigned(0,16) else '0';
 

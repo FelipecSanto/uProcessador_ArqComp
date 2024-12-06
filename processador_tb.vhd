@@ -69,7 +69,7 @@ begin
     -- Processo para definir o tempo de simulação
     sim_time_proc : process
     begin
-        wait for 6 us;
+        wait for 92 us;
         finished <= '1';
         wait;
     end process sim_time_proc;
@@ -81,7 +81,7 @@ begin
         wait for clk_period;
 
         -- Simulação
-        wait for 40*clk_period;
+        wait for 919*clk_period;
 
         -- Stop simulation
         wait;

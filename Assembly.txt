@@ -13,17 +13,18 @@ I. Zera R3 (nunca será executada)
 
 Assembly:
 
-1	A:	LD   R3, 5	
-2	B:      LD   R4, 8
-3	C:      MOV  A, R3
-4		ADD  A, R4
-5		MOV  R5, A
-6	D:	LD   R1, 1
-7		SUB  A, R1
-8		MOV  R5, A
-9	E:	JA   20
-10	F:	MOV  R5, 0
-11		NOP	
+0	A:	LD   R3, 5	
+1	B:   LD   R4, 8
+2	C:   MOV  A, R3
+3		ADD  A, R4
+4		MOV  R5, A
+5	D:	LD   R1, 1
+6		SUB  A, R1
+7		MOV  R5, A
+8	E:	JA   20
+9	F:	MOV  R5, 0
+10		NOP	
+11		NOP
 12		NOP
 13		NOP
 14		NOP
@@ -31,7 +32,7 @@ Assembly:
 16		NOP
 17		NOP
 18		NOP
-19		NOP
+19        NOP
 20	G:	MOV  R3, R5
 21	H:	JA   C
 22	I:	LD   R3, 0

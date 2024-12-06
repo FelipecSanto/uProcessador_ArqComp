@@ -10,6 +10,9 @@ architecture a_UC_tb of UC_tb is
         port (
             clk                 : in std_logic;
             instruction         : in unsigned(18 downto 0);
+            flagNegativeFF_in   : in std_logic;
+            flagZeroFF_in       : in std_logic;
+            flagOverflowFF_in   : in std_logic;
             PC_wr_en_o          : out std_logic;
             jump_abs_o          : out std_logic;
             jump_rel_o          : out std_logic;
@@ -20,7 +23,9 @@ architecture a_UC_tb of UC_tb is
             data_in_regbank_o   : out unsigned(15 downto 0);
             regs_en_o           : out std_logic;
             acumulador_en_o     : out std_logic;
+            flags_en            : out std_logic;
             mov_instruction_o   : out std_logic;
+            cmpi_instruction_o  : out std_logic;
             estado              : out unsigned(1 downto 0)
         );
     end component;
@@ -52,7 +57,12 @@ begin
             data_in_regbank_o => open,
             regs_en_o => open,
             acumulador_en_o => open,
+            flags_en => open,
+            flagNegativeFF_in => open,
+            flagZeroFF_in => open,
+            flagOverflowFF_in => open,
             mov_instruction_o => open,
+            cmpi_instruction_o => open,
             estado => estado
         );
 

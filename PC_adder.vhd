@@ -47,7 +47,7 @@ architecture a_PC_adder of PC_adder is
         -- ATUALIZAÇÃO DO PC
         PC_data_in <= ('0' & jump_addr_i) when jump_abs_i = '1' else
                       ('0' & PC_data_out) + ('0' & jump_addr_i) when jump_rel_i = '1' else
-                      PC_data_out + "0000001";
+                      ('0' & PC_data_out) + "00000001";
 
         data_out <= PC_data_out;
 
