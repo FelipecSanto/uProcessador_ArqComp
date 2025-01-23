@@ -8,9 +8,11 @@ entity reg_bank is
       rst           : in std_logic;
       reg_wr_en     : in std_logic;
       selec_reg_wr  : in unsigned(2 downto 0);
-      selec_reg_rd  : in unsigned(2 downto 0);
+      selec_reg_rd1  : in unsigned(2 downto 0);
+      selec_reg_rd2  : in unsigned(2 downto 0);
       data_wr       : in unsigned(15 downto 0);
-      data_r1       : out unsigned(15 downto 0)
+      data_r1       : out unsigned(15 downto 0);
+      data_r2       : out unsigned(15 downto 0)
    );
 end entity;
 
@@ -45,13 +47,22 @@ begin
                          "100000" when (selec_reg_wr = "101" and enable) else
                          (others => '0');
 
-    -- Multiplexador para selecionar o registrador de leitura
-    data_r1 <= regs(0) when selec_reg_rd = "000" else
-               regs(1) when selec_reg_rd = "001" else
-               regs(2) when selec_reg_rd = "010" else
-               regs(3) when selec_reg_rd = "011" else
-               regs(4) when selec_reg_rd = "100" else
-               regs(5) when selec_reg_rd = "101" else
+    -- Multiplexador para selecionar o registrador de leitura 1
+    data_r1 <= regs(0) when selec_reg_rd1 = "000" else
+               regs(1) when selec_reg_rd1 = "001" else
+               regs(2) when selec_reg_rd1 = "010" else
+               regs(3) when selec_reg_rd1 = "011" else
+               regs(4) when selec_reg_rd1 = "100" else
+               regs(5) when selec_reg_rd1 = "101" else
+               (others => '0');
+
+    -- Multiplexador para selecionar o registrador de leitura 2
+    data_r2 <= regs(0) when selec_reg_rd2 = "000" else
+               regs(1) when selec_reg_rd2 = "001" else
+               regs(2) when selec_reg_rd2 = "010" else
+               regs(3) when selec_reg_rd2 = "011" else
+               regs(4) when selec_reg_rd2 = "100" else
+               regs(5) when selec_reg_rd2 = "101" else
                (others => '0');
 
     -- Instanciação dos registradores
