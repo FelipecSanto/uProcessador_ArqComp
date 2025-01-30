@@ -13,6 +13,7 @@ VHDL_FILES = \
 	maquina_estados.vhd maquina_estados_tb.vhd \
 	UC.vhd UC_tb.vhd \
 	instruction_reg.vhd \
+	ram.vhd \
 	processador.vhd processador_tb.vhd
 
 # Arquivo de dump de simulação
@@ -70,6 +71,8 @@ $(TESTBENCH): $(VHDL_FILES)
 #	$(GHDL) -e UC_tb
 	$(GHDL) -a instruction_reg.vhd
 	$(GHDL) -e instruction_reg
+	$(GHDL) -a ram.vhd
+	$(GHDL) -e ram
 	$(GHDL) -a processador.vhd
 	$(GHDL) -e processador
 	$(GHDL) -a processador_tb.vhd

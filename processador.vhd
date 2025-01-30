@@ -82,7 +82,8 @@ architecture a_processador of processador is
             jump_addr_o         : out unsigned(6 downto 0);
             op_ULA              : out unsigned(2 downto 0);
             wr_addr_o           : out unsigned(2 downto 0);
-            rd_addr_o           : out unsigned(2 downto 0);
+            rd_addr1_o          : out unsigned(2 downto 0);
+            rd_addr2_o          : out unsigned(2 downto 0);
             cte_LD_o            : out unsigned(15 downto 0);
             regs_en_o           : out std_logic;
             acumulador_en_o     : out std_logic;
@@ -313,7 +314,8 @@ begin
             jump_addr_o         => jump_addr,
             op_ULA              => op_ULA_s,
             wr_addr_o           => wr_addr_s,
-            rd_addr_o           => rd_addr1_s,
+            rd_addr1_o          => rd_addr1_s,
+            rd_addr2_o          => rd_addr2_s,
             cte_LD_o            => cte_LD,
             regs_en_o           => regs_en_s,
             acumulador_en_o     => acumulador_en_s,
