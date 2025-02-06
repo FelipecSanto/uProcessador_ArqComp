@@ -58,6 +58,7 @@ architecture a_UC of UC is
     signal execute          : boolean := false;
     signal eh_ld            : boolean := false;
     signal eh_mov           : boolean := false;
+    signal eh_lw            : boolean := false;
     signal ble : std_logic := '0';
     signal bmi : std_logic := '0';
 
@@ -107,6 +108,7 @@ begin
 
     is_for_acumulator <= true when (instruction(12 downto 10) = "110" and eh_mov) else  -- MOV A, Rm
                          true when (instruction(9 downto 7) = "110" and eh_ld) else     -- LD A, cte
+                         true when (instruction(12 downto 10) = "110" and eh_lw) else     -- LW Rn, cte (Rm)
                          false;
 
     -- HABILITA O ACUMULADOR PARA AS OPERAÇÕES DE ULA e LD
@@ -116,6 +118,7 @@ begin
                        '1' when (opcode = "0010" and funct = "001" and execute) else        -- AND A, Rn
                        '1' when (opcode = "0011" and funct = "000" and execute and is_for_acumulator) else -- LD A, cte  A = cte
                        '1' when (opcode = "0100" and funct = "000" and execute and is_for_acumulator) else -- MOV A, Rm  A = Rm
+                       '1' when (opcode = "0110" and funct = "001" and execute and is_for_acumulator) else -- LW Rn, cte (Rm)  A = Rm
                        '0';
 
 
@@ -161,6 +164,7 @@ begin
     -- INSTRUÇÕES DE MEMÓRIA
     sw_en_o <= '1' when (opcode = "0110" and funct = "000") else '0';  -- SW Rn, cte (Rm)   
     lw_en_o <= '1' when (opcode = "0110" and funct = "001") else '0';  -- LW Rn, cte (Rm)
+    eh_lw <= (opcode = "0110" and funct = "001");
 
     cte_ram <= '0' & instruction(18 downto 13) when (opcode = "0110" and instruction(18) = '0') else
                '1' & instruction(18 downto 13) when (opcode = "0110" and instruction(18) = '1') else

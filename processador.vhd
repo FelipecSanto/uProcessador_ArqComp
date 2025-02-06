@@ -145,12 +145,14 @@ architecture a_processador of processador is
 
     -- SINAIS PARA A INSTRUÇÃO
 
-    signal address_instruction  : unsigned(6 downto 0) := (others => '0');      -- ENTRADA DA ROM
+    signal address_instruction  : unsigned(6 downto 0) := (others => '0');      -- ENDEREÇO DA ROM
     signal instruction_s        : unsigned(18 downto 0) := (others => '0');     -- SAÍDA DA ROM
     signal instruction_reg_s    : unsigned(18 downto 0) := (others => '0');     -- SAÍDA DO REGISTRADOR DE INSTRUÇÃO
 
     -- SINAIS PARA A INSTRUÇÕES DE MEMÓRIA
 
+    signal data_in_ram : unsigned(15 downto 0) := (others => '0');
+    signal regAdress_ram : unsigned(6 downto 0) := (others => '0');
     signal endereco_ram : unsigned(6 downto 0) := (others => '0');
     signal sw_en_s   : std_logic := '0';
     signal lw_en_s : std_logic := '0';
@@ -270,14 +272,21 @@ begin
     
     ------------------------------------------------------------ RAM -----------------------------------------------------------------
 
-    endereco_ram <= regBank_out1_s(6 downto 0) + cte_ram_s;
+    -- MUX PARA DECIDIR QUAL DADO SERÁ ESCRITO NA RAM (acumulador ou registrador normal)
+    data_in_ram <= acumulador_out_s when (rd_addr2_s = "110") else regBank_out2_s;
+
+    -- MUX PARA DECIDIR QUAL ENDEREÇO SERÁ LIDO NA RAM (acumulador ou registrador normal)
+    regAdress_ram <= acumulador_out_s(6 downto 0) when (rd_addr1_s = "110") else regBank_out1_s(6 downto 0);
+
+    -- SOMA DO ENDEREÇO DA RAM COM A CONSTANTE
+    endereco_ram <= regAdress_ram + cte_ram_s;
 
     ram_inst: ram
         port map (
             clk      => clk,
             endereco => endereco_ram,
             wr_en    => sw_en_s,
-            dado_in  => regBank_out2_s,
+            dado_in  => data_in_ram,
             dado_out => data_out_ram
         );
 
@@ -381,6 +390,7 @@ begin
     -- MUX PARA DECIDIR QUAL DADO SERÁ ESCRITO NO ACUMULADOR
     acumulador_in_s <= regBank_out1_s   when (mov_en_s = '1' and wr_addr_s = "110") else    -- SE A INSTRUÇÃO FOR MOV E FOR DO REGISTRADOR PARA O ACUMULADOR (MOV A, Rn)
                        cte_LD           when (ld_en_s =  '1' and wr_addr_s = "110") else    -- SE A INSTRUÇÃO FOR LD E FOR PARA O ACUMULADOR (LD A, cte)
+                       data_out_ram     when (lw_en_s =  '1' and wr_addr_s = "110") else    -- SE A INSTRUÇÃO FOR LW E FOR PARA INSERIR NO ACUMULADOR (LW A, cte (Rm))
                        ula_result_s;
 
 
