@@ -19,9 +19,9 @@ entity UC is
         op_ULA              : out unsigned(2 downto 0);
         -- reg_bank:
         wr_addr_o           : out unsigned(2 downto 0);
-        rd_addr1_o           : out unsigned(2 downto 0);
-        rd_addr2_o           : out unsigned(2 downto 0);
-        cte_LD_o   : out unsigned(15 downto 0);
+        rd_addr1_o          : out unsigned(2 downto 0);
+        rd_addr2_o          : out unsigned(2 downto 0);
+        cte_LD_o            : out unsigned(15 downto 0);
         regs_en_o           : out std_logic;
         acumulador_en_o     : out std_logic;
         flags_en            : out std_logic;
@@ -32,8 +32,8 @@ entity UC is
         -- LD:
         ld_en_o             : out std_logic;
         -- RAM:
-        sw_en_o         : out std_logic;
-        lw_en_o         : out std_logic;
+        sw_en_o             : out std_logic;
+        lw_en_o             : out std_logic;
         cte_ram             : out unsigned(6 downto 0);
         -- maquina_estados:
         estado              : out unsigned(1 downto 0)
@@ -172,8 +172,8 @@ begin
 
     -- JUMPS
     jump_abs_o <=   '1' when (opcode = "1111" and funct = "000") else '0';          -- Pula para a instrução jump_addr_o
-    jump_rel_o <=   '1' when (opcode = "1111" and funct = "001" and ble = '1') else       -- Pula jump_addr_o instruções (SE Rn <= cte)
-                    '1' when (opcode = "1111" and funct = "010" and bmi = '1') else '0';  -- Pula jump_addr_o instruções (SE Rn < cte)
+    jump_rel_o <=   '1' when (opcode = "1111" and funct = "001" and ble = '1') else       -- Pula jump_addr_o instruções (SE Rn <= A == cte)
+                    '1' when (opcode = "1111" and funct = "010" and bmi = '1') else '0';  -- Pula jump_addr_o instruções (SE Rn < A == cte)
 
     jump_addr_o <=  instruction(13 downto 7) when (opcode = "1111") else (others => '0');
 

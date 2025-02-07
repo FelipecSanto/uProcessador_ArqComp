@@ -1,74 +1,148 @@
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-TestBench
-A. Carrega R3 (o registrador 3) com o valor 5
-B. Carrega R4 com 8
-C. Soma R3 com R4 e guarda em R5
-D. Subtrai 1 de R5
-E. Salta para o endereço 20
-F. Zera R5 (nunca será executada)
-G. No endereço 20, copia R5 para R3
-H. Salta para o passo C desta lista (R5 <= R3+R4)
-I. Zera R3 (nunca será executada)
-
-
 Assembly:
 
-0	A:	LD   R3, 5	
-1	B:   LD   R4, 8
-2	C:   MOV  A, R3
-3		ADD  A, R4
-4		MOV  R5, A
-5	D:	LD   R1, 1
-6		SUB  A, R1
-7		MOV  R5, A
-8	E:	JA   20
-9	F:	MOV  R5, 0
-10		NOP	
-11		NOP
-12		NOP
-13		NOP
-14		NOP
-15		NOP
-16		NOP
-17		NOP
-18		NOP
-19        NOP
-20	G:	MOV  R3, R5
-21	H:	JA   C
-22	I:	LD   R3, 0
+0	LD    R1, 2	# Contador
+1	LD    R2, 94
+
+2	SW    R1, 0(R2)
+
+3	LD    A, 1	# R2++
+4	ADD   A, R2
+5	MOV   R2, A	# R2++
+
+6	LD    A, 1	# R1++
+7	ADD   A, R1
+8	MOV   R1, A	# R1++
+
+9	LD    A, 32	# condição loop
+10	CMPI  R1, A
+11	BLE   -9
+
+
+
+# Inicialização de variáveis para o proximo loop
+
+12	LD    R0, 2
+13	LD    R1, 1
+14	LD    R2, 96
+15	LD    R3, -1
+16	LD    R4, 94
+
+# Loop interno 1 para retirar os números não primos
+
+17	SW    R3, 0(R2)	# Volta aqui (loop interno 1 e loop externo)
+
+18	MOV   A, R2	# R2+=R0
+19	ADD   A, R0
+20	MOV   R2, A	# R2+=R0
+
+21	LD    A, 126	# condição loop interno 1
+22	CMPI  R2, A
+23	BLE   -9	# condição loop interno 1
+
+
+# Loop interno 2 para procurar a nova incrementação
+
+24	LD    A, 1	# Volta aqui (loop interno 2)
+25	ADD   A, R4
+26	MOV   R4, A	# R4++
+27	LW    R5, 0(R4)
+
+28	LD    A, 0	# condição loop interno 2
+29	CMPI  R5, A
+30	BMI   -6	# condição loop interno 2
+
+31	MOV   R0, R5	# Nova incrementação (R0 = 3,5,... nesse caso vai só até 5)
+
+
+32	MOV   A, R4	# Novo início do loop interno 1
+33	ADD   A, R0
+34	MOV   R2, A	# Novo início do loop interno 1
+
+
+35	LD    A, 3	# Condição loop externo
+36	CMPI  R1, A
+37	BLE   -20	# Condição loop externo
+
+
+
+
+# Inicialização de variáveis para o proximo loop
+
+38	LD    R1, 0	
+39	LD    R4, 94
+
+# Loop para passar todos os primos até 31 pras posições iniciais da RAM em ordem crescente um atrás do outro
+
+40	LW    R0, 0(R4)	# Volta aqui
+
+41	LD    A, 1	# R4++
+42	ADD   A, R4
+43	MOV   R4, A	# R4++
+
+44	LD    A, 0	# if (R0 >= 0)
+45	CMPI  R0, A
+46	BMI   -6	# if (R0 >= 0)
+
+# {
+
+47	SW    R0, 0(R1)
+
+47	LD    A, 1	# R1++
+48	ADD   A, R1
+49	MOV   R1, A	# R1++
+
+# }
+
+50	LD    A, 30	# Condição loop
+51	CMPI  R0, A
+52	BLE   -13	# Condição loop
+
+
+
+# Inicialização de variáveis para o proximo loop
+
+53	LD    R1, 0
+54	LD    R4, 94
+
+# Loop para passar os números primos para a posição 94 em diante da RAM
+
+55	LW    R2, 0(R1)	# Volta aqui
+56	SW    R2, 0(R4)
+
+57	LD    A, 1	# R1++
+58	ADD   A, R1
+59	MOV   R1, A	# R1++
+
+60	LD    A, 1	# R4++
+61	ADD   A, R4
+62	MOV   R4, A	# R4++
+
+63	LD    A, 30	# Condição loop
+64	CMPI  R2, A
+65	BLE   -10	# Condição loop
+
+
+
+# Inicialização de variáveis para o proximo loop
+
+66	LD    R1, 94
+
+# Loop para mostrar a sequência de números primos
+
+67	LW    R0, 0(R1)	# Volta aqui
+
+68	LD    A, 1	# R1++
+69	ADD   A, R1
+70	MOV   R1, A	# R1++
+
+71	LD    A, 30	# Condição loop
+72	CMPI  R0, A
+73	BLE   -6	# Condição loop
+
+
 
 
 
 Código de Máquina:
-
-
-     -- bit 18 a 7: depende da instrução (por enquanto ver UC para saber cada uma)
-     -- bit 6 a 4: funct
-     -- bit 3 a 0: opcode
-      0  => B"000000101_011_000_0011",    -- A: Carrega R3 (o registrador 3) com o valor 5
-      1  => B"000001000_100_000_0011",    -- B: Carrega R4 com o valor 8
-      2  => B"000000_110_011_000_0100",   -- C: Copia R3 para A
-      3  => B"000000000_100_000_0001",    -- C: Soma R4 com A e guarda em A
-      4  => B"000000_101_110_000_0100",   -- C: Copia A para R5
-      5  => B"000000001_001_000_0011",    -- D: Carrega R1 com o valor 1
-      6  => B"000000000_001_001_0001",    -- D: Subtrai R1 de A e guarda em A
-      7  => B"000000_101_110_000_0100",   -- D: Copia A para R5
-      8  => B"00000_0010100_000_1111",    -- E: Salta para o endereço 20
-      9  => B"000000000_101_000_0011",    -- F: Carrega R5 com o valor 0 (nunca será executada)
-      10 => B"000000000_000_000_0000",    -- F: NOP
-      11 => B"000000000_000_000_0000",    -- F: NOP
-      12 => B"000000000_000_000_0000",    -- F: NOP
-      13 => B"000000000_000_000_0000",    -- F: NOP
-      14 => B"000000000_000_000_0000",    -- F: NOP
-      15 => B"000000000_000_000_0000",    -- F: NOP
-      16 => B"000000000_000_000_0000",    -- F: NOP
-      17 => B"000000000_000_000_0000",    -- F: NOP
-      18 => B"000000000_000_000_0000",    -- F: NOP
-      19 => B"000000000_000_000_0000",    -- F: NOP
-      20 => B"000000_011_101_000_0100",   -- G: Copia R5 para R3
-      21 => B"00000_0000010_000_1111",    -- H: Salta para o passo C
-      22 => B"000000000_011_000_0011",    -- I: Carrega R3 com o valor 0 (nunca será executada)
-      -- abaixo: casos omissos => (zero em todos os bits)
-      others => (others=>'0')
 
 
