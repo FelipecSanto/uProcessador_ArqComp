@@ -69,7 +69,7 @@ begin
     -- Processo para definir o tempo de simulação
     sim_time_proc : process
     begin
-        wait for 92 us;
+        wait for 1500 us;
         finished <= '1';
         wait;
     end process sim_time_proc;
