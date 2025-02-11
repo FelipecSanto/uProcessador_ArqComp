@@ -10,7 +10,7 @@ architecture a_processador_tb of processador_tb is
         port(
             clk             : in std_logic;
             rst             : in std_logic;
-            data_out_PC_o   : out unsigned(6 downto 0);
+            data_out_PC_o   : out unsigned(15 downto 0);
             result_ula_o    : out unsigned(15 downto 0);
             regBank_out     : out unsigned(15 downto 0);
             acumulador_out  : out unsigned(15 downto 0);
@@ -21,7 +21,7 @@ architecture a_processador_tb of processador_tb is
 
     signal clk             : std_logic := '0';
     signal rst             : std_logic := '0';
-    signal data_out_PC_o   : unsigned(6 downto 0) := (others => '0');
+    signal data_out_PC_o   : unsigned(15 downto 0) := (others => '0');
     signal result_ula_o    : unsigned(15 downto 0) := (others => '0');
     signal regBank_out     : unsigned(15 downto 0) := (others => '0');
     signal acumulador_out  : unsigned(15 downto 0) := (others => '0');
@@ -69,7 +69,7 @@ begin
     -- Processo para definir o tempo de simulação
     sim_time_proc : process
     begin
-        wait for 1500 us;
+        wait for 323 us;
         finished <= '1';
         wait;
     end process sim_time_proc;

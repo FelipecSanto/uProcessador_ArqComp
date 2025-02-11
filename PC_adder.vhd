@@ -9,9 +9,9 @@ entity PC_adder is
        PC_wr_en_i  : in std_logic;
        jump_abs_i  : in std_logic;
        jump_rel_i  : in std_logic;
-       jump_addr_i : in unsigned(6 downto 0);
-       data_in     : in unsigned(6 downto 0);
-       data_out    : out unsigned(6 downto 0)
+       jump_addr_i : in unsigned(15 downto 0);
+       data_in     : in unsigned(15 downto 0);
+       data_out    : out unsigned(15 downto 0)
     );
 end entity;
 
@@ -21,14 +21,14 @@ architecture a_PC_adder of PC_adder is
             clk      : in std_logic;
             rst      : in std_logic;
             wr_en    : in std_logic;
-            data_in  : in unsigned(6 downto 0);
-            data_out : out unsigned(6 downto 0)
+            data_in  : in unsigned(15 downto 0);
+            data_out : out unsigned(15 downto 0)
         );
     end component;
 
-    signal PC_data_in  : unsigned(7 downto 0) := (others => '0');
-    signal PC_data_in_s: unsigned(6 downto 0) := (others => '0');
-    signal PC_data_out : unsigned(6 downto 0) := (others => '0');
+    signal PC_data_in  : unsigned(15 downto 0) := (others => '0');
+    signal PC_data_in_s: unsigned(15 downto 0) := (others => '0');
+    signal PC_data_out : unsigned(15 downto 0) := (others => '0');
 
     begin
         PC_inst: PC
@@ -40,14 +40,14 @@ architecture a_PC_adder of PC_adder is
             data_out => PC_data_out
         );
 
-        -- PARA QUANDO O ENDEREÇO DA ROM A SER PEGO FOR NEGATIVO
-        PC_data_in_s <= (others => '0') when PC_data_in(6) = '1' else 
-                        PC_data_in(6 downto 0);
+        -- PARA QUANDO O ENDEREÇO DA ROM A SER PEGO FOR NEGATIVO (extesão de sinal)
+        PC_data_in_s <= (others => '0') when PC_data_in(15) = '1' else
+                        PC_data_in;
 
         -- ATUALIZAÇÃO DO PC
-        PC_data_in <= ('0' & jump_addr_i) when jump_abs_i = '1' else
-                      ('0' & PC_data_out) + ('0' & jump_addr_i) when jump_rel_i = '1' else
-                      ('0' & PC_data_out) + "00000001";
+        PC_data_in <= jump_addr_i when jump_abs_i = '1' else
+                      PC_data_out + jump_addr_i when jump_rel_i = '1' else
+                      PC_data_out + "0000000000000001";
 
         data_out <= PC_data_out;
 

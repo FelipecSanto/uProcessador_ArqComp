@@ -14,7 +14,7 @@ entity UC is
         PC_wr_en_o          : out std_logic;
         jump_abs_o          : out std_logic;
         jump_rel_o          : out std_logic;
-        jump_addr_o         : out unsigned(6 downto 0);
+        jump_addr_o         : out unsigned(15 downto 0);
         -- ULA:
         op_ULA              : out unsigned(2 downto 0);
         -- reg_bank:
@@ -175,7 +175,9 @@ begin
     jump_rel_o <=   '1' when (opcode = "1111" and funct = "001" and ble = '1') else       -- Pula jump_addr_o instruções (SE Rn <= A == cte)
                     '1' when (opcode = "1111" and funct = "010" and bmi = '1') else '0';  -- Pula jump_addr_o instruções (SE Rn < A == cte)
 
-    jump_addr_o <=  instruction(13 downto 7) when (opcode = "1111") else (others => '0');
+    jump_addr_o <=  "1111" & instruction(18 downto 7) when (opcode = "1111" and instruction(18) = '1' ) else 
+                    "0000" & instruction(18 downto 7) when (opcode = "1111" and instruction(18) = '0' ) else
+                    (others => '0');
 
     -- BRANCHES
     ble <= '1' when (flagZeroFF_in = '1' or flagNegativeFF_in /= flagOverflowFF_in) else '0';

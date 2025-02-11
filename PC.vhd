@@ -7,14 +7,14 @@ entity PC is
       clk      : in std_logic;
       rst      : in std_logic;
       wr_en    : in std_logic;
-      data_in  : in unsigned(6 downto 0);
-      data_out : out unsigned(6 downto 0)
+      data_in  : in unsigned(15 downto 0);
+      data_out : out unsigned(15 downto 0)
    );
 end entity;
 
 
 architecture a_PC of PC is
-    signal registro: unsigned(6 downto 0) := (others=>'0');
+    signal registro: unsigned(15 downto 0) := (others=>'0');
  begin
     process(clk,rst,wr_en)  
     begin                

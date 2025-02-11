@@ -6,7 +6,7 @@ entity processador is
     port(
         clk             : in std_logic;
         rst             : in std_logic;
-        data_out_PC_o   : out unsigned(6 downto 0);
+        data_out_PC_o   : out unsigned(15 downto 0);
         result_ula_o    : out unsigned(15 downto 0);
         regBank_out     : out unsigned(15 downto 0);
         acumulador_out  : out unsigned(15 downto 0);
@@ -50,7 +50,7 @@ architecture a_processador of processador is
     component ROM
         port( 
             clk      : in std_logic;
-            endereco : in unsigned(6 downto 0);
+            endereco : in unsigned(15 downto 0);
             dado     : out unsigned(18 downto 0)
         );
     end component;
@@ -62,9 +62,9 @@ architecture a_processador of processador is
             PC_wr_en_i  : in std_logic;
             jump_abs_i  : in std_logic;
             jump_rel_i  : in std_logic;
-            jump_addr_i : in unsigned(6 downto 0);
-            data_in     : in unsigned(6 downto 0);
-            data_out    : out unsigned(6 downto 0)
+            jump_addr_i : in unsigned(15 downto 0);
+            data_in     : in unsigned(15 downto 0);
+            data_out    : out unsigned(15 downto 0)
         );
     end component;
 
@@ -79,7 +79,7 @@ architecture a_processador of processador is
             PC_wr_en_o          : out std_logic;
             jump_abs_o          : out std_logic;
             jump_rel_o          : out std_logic;
-            jump_addr_o         : out unsigned(6 downto 0);
+            jump_addr_o         : out unsigned(15 downto 0);
             op_ULA              : out unsigned(2 downto 0);
             wr_addr_o           : out unsigned(2 downto 0);
             rd_addr1_o          : out unsigned(2 downto 0);
@@ -145,7 +145,7 @@ architecture a_processador of processador is
 
     -- SINAIS PARA A INSTRUÇÃO
 
-    signal address_instruction  : unsigned(6 downto 0) := (others => '0');      -- ENDEREÇO DA ROM
+    signal address_instruction  : unsigned(15 downto 0) := (others => '0');     -- ENDEREÇO DA ROM
     signal instruction_s        : unsigned(18 downto 0) := (others => '0');     -- SAÍDA DA ROM
     signal instruction_reg_s    : unsigned(18 downto 0) := (others => '0');     -- SAÍDA DO REGISTRADOR DE INSTRUÇÃO
 
@@ -163,7 +163,7 @@ architecture a_processador of processador is
 
     signal jump_abs     : std_logic := '0';
     signal jump_rel     : std_logic := '0';
-    signal jump_addr    : unsigned(6 downto 0) := (others => '0');
+    signal jump_addr    : unsigned(15 downto 0) := (others => '0');
 
     -- SINAIS ENABLERS
 
