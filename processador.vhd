@@ -11,7 +11,9 @@ entity processador is
         regBank_out     : out unsigned(15 downto 0);
         acumulador_out  : out unsigned(15 downto 0);
         instruction_o   : out unsigned(18 downto 0);
-        estado_o        : out unsigned(1 downto 0)
+        estado_o        : out unsigned(1 downto 0);
+        saida_reg_r0    : out unsigned(15 downto 0);
+        saida_reg_r1    : out unsigned(15 downto 0)
     );
 end entity;
 
@@ -108,7 +110,9 @@ architecture a_processador of processador is
             selec_reg_rd2  : in unsigned(2 downto 0);
             data_wr         : in unsigned(15 downto 0);
             data_r1         : out unsigned(15 downto 0);
-            data_r2       : out unsigned(15 downto 0)
+            data_r2       : out unsigned(15 downto 0);
+            saida_r0        : out unsigned(15 downto 0);
+            saida_r1        : out unsigned(15 downto 0)
         );
     end component;
 
@@ -202,6 +206,8 @@ architecture a_processador of processador is
 
     signal regBank_out1_s   : unsigned(15 downto 0) := (others => '0');
     signal regBank_out2_s   : unsigned(15 downto 0) := (others => '0');
+    signal saida_r0_s       : unsigned(15 downto 0) := (others => '0');
+    signal saida_r1_s       : unsigned(15 downto 0) := (others => '0');
 
     -- MAQUINA DE ESTADOS
 
@@ -360,7 +366,9 @@ begin
             selec_reg_rd2 => rd_addr2_s,
             data_wr => data_in_regbank_s,
             data_r1 => regBank_out1_s,
-            data_r2 => regBank_out2_s
+            data_r2 => regBank_out2_s,
+            saida_r0 => saida_r0_s,
+            saida_r1 => saida_r1_s
         );
     
     ---------------------------------------------------------- REG_BANK --------------------------------------------------------------
@@ -369,7 +377,8 @@ begin
     -- GAMBIARRA PARA A COMPARAÇÃO COM A CONSTANTE
     ULA_in_A <= regBank_out1_s  when (cmpi_en_s = '1') else acumulador_out_s;
     ULA_in_B <= acumulador_out_s    when (cmpi_en_s = '1') else regBank_out1_s;
-
+    saida_reg_r0 <= saida_r0_s;
+    saida_reg_r1 <= saida_r1_s;
     
     ------------------------------------------------------------- ULA ----------------------------------------------------------------
 

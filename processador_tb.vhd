@@ -15,7 +15,9 @@ architecture a_processador_tb of processador_tb is
             regBank_out     : out unsigned(15 downto 0);
             acumulador_out  : out unsigned(15 downto 0);
             instruction_o   : out unsigned(18 downto 0);
-            estado_o          : out unsigned(1 downto 0)
+            estado_o        : out unsigned(1 downto 0);
+            saida_reg_r0    : out unsigned(15 downto 0);
+            saida_reg_r1    : out unsigned(15 downto 0)
         );
     end component;
 
@@ -27,6 +29,8 @@ architecture a_processador_tb of processador_tb is
     signal acumulador_out  : unsigned(15 downto 0) := (others => '0');
     signal instruction_o   : unsigned(18 downto 0) := (others => '0');
     signal estado          : unsigned(1 downto 0) := (others => '0');
+    signal saida_reg_r0    : unsigned(15 downto 0) := (others => '0');
+    signal saida_reg_r1    : unsigned(15 downto 0) := (others => '0');
 
     constant clk_period : time := 100 ns;
     signal finished : std_logic := '0';
@@ -42,7 +46,9 @@ begin
             regBank_out => regBank_out,
             acumulador_out => acumulador_out,
             instruction_o => instruction_o,
-            estado_o => estado
+            estado_o => estado,
+            saida_reg_r0 => saida_reg_r0,
+            saida_reg_r1 => saida_reg_r1
         );
 
     -- Geração do clock
@@ -81,7 +87,7 @@ begin
         wait for clk_period;
 
         -- Simulação
-        wait for 919*clk_period;
+        wait for 3230*clk_period;
 
         -- Stop simulation
         wait;

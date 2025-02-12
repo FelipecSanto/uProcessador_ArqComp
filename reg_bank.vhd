@@ -12,7 +12,9 @@ entity reg_bank is
       selec_reg_rd2  : in unsigned(2 downto 0);
       data_wr       : in unsigned(15 downto 0);
       data_r1       : out unsigned(15 downto 0);
-      data_r2       : out unsigned(15 downto 0)
+      data_r2       : out unsigned(15 downto 0);
+      saida_r0      : out unsigned(15 downto 0);
+      saida_r1      : out unsigned(15 downto 0)
    );
 end entity;
 
@@ -64,6 +66,9 @@ begin
                regs(4) when selec_reg_rd2 = "100" else
                regs(5) when selec_reg_rd2 = "101" else
                (others => '0');
+
+    saida_r0 <= regs(0);
+    saida_r1 <= regs(1);
 
     -- Instanciação dos registradores
     reg0: reg16bits
